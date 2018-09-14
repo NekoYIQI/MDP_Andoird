@@ -53,7 +53,7 @@
                 android:layout_height="40dp"
                 android:text="RESET"
                 android:id="@+id/btn_reset"
-                android:background="@drawable/selecter"
+                android:background="@drawable/selector"
                 android:allowUndo="false"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:textColor="#ffffff"
@@ -94,7 +94,7 @@
                 android:id="@+id/btn_fastest"
                 android:textColor="#ffffff"
                 android:radius="20dp"
-                android:background="@drawable/selecter"
+                android:background="@drawable/selector"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:textSize="18dp"
                 android:nestedScrollingEnabled="false"
@@ -133,7 +133,7 @@
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_height="40dp"
                 android:id="@+id/btn_explore"
-                android:background="@drawable/selecter"
+                android:background="@drawable/selector"
                 android:textColor="#ffffff"
                 android:radius="20dp"
                 android:textSize="18dp"
@@ -363,28 +363,13 @@
                 android:layout_width="150dp"
                 android:text="Set Coord"
                 android:id="@+id/btn_setXY"
-                android:background="@drawable/selecter"
+                android:background="@drawable/selector"
                 android:textColor="#ffffff"
                 android:onClick="setCoord"
                 android:textSize="18dp"
                 android:layout_toEndOf="@+id/dir"
                 android:layout_alignTop="@+id/coor_x"
                 android:layout_marginLeft="20dp"/>
-
-            <!--<Button-->
-            <!--style="@style/Widget.AppCompat.Button.Colored"-->
-            <!--android:layout_width="110dp"-->
-            <!--android:layout_height="40dp"-->
-            <!--android:text="START"-->
-            <!--android:id="@+id/btn_start"-->
-            <!--android:background="@drawable/round_btn"-->
-            <!--android:textColor="#ffffff"-->
-            <!--android:radius="20dp"-->
-            <!--android:onClick="start"-->
-            <!--android:textSize="18dp"-->
-            <!--android:layout_marginLeft="20dp"-->
-            <!--android:layout_alignTop="@+id/btn_setXY"-->
-            <!--android:layout_toEndOf="@+id/btn_setXY" />-->
 
         </RelativeLayout>
 
@@ -402,7 +387,7 @@
                 android:textOn="Auto"
                 android:textColor="#ffffff"
                 android:checked="false"
-                android:background="@drawable/togglebtn"
+                android:background="@drawable/toggle_button"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:textSize="18dp"
                 android:layout_alignParentStart="true" />
@@ -414,7 +399,7 @@
                 android:text="Update"
                 android:id="@+id/btn_update"
                 android:textColor="#ffffff"
-                android:background="@drawable/togglebtn"
+                android:background="@drawable/toggle_button"
                 android:clickable="false"
                 android:textSize="18dp"
                 android:layout_marginLeft="20dp"
@@ -427,7 +412,7 @@
                 android:layout_height="40dp"
                 android:text="F1"
                 android:id="@+id/btn_f1"
-                android:background="@drawable/selecter"
+                android:background="@drawable/selector"
                 android:textColor="#ffffff"
                 android:textSize="18dp"
                 android:layout_marginLeft="20dp"
@@ -439,7 +424,7 @@
                 android:layout_height="40dp"
                 android:text="F2"
                 android:id="@+id/btn_f2"
-                android:background="@drawable/selecter"
+                android:background="@drawable/selector"
                 android:textColor="#ffffff"
                 android:textSize="18dp"
                 android:layout_marginLeft="20dp"
@@ -451,7 +436,7 @@
                 android:layout_height="40dp"
                 android:text="Tilt"
                 android:id="@+id/tilt_btn"
-                android:background="@drawable/togglebtn"
+                android:background="@drawable/toggle_button"
                 android:textColor="#ffffff"
                 android:textOff="TILT OFF"
                 android:textOn="TILT ON"
@@ -468,7 +453,7 @@
                 android:text="Send to AMD"
                 android:id="@+id/send_btn"
                 android:textSize="12dp"
-                android:background="@drawable/togglebtn"
+                android:background="@drawable/toggle_button"
                 android:textColor="#ffffff"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:visibility="gone" />
@@ -485,7 +470,7 @@
                 android:layout_marginLeft="5dp"
                 android:visibility="gone"
                 android:layout_alignParentTop="true"
-                android:layout_alignEnd="@+id/btn_automanual"/>
+                android:layout_alignRight="@+id/btn_automanual"/>
             <!--android:layout_alignStart="@+id/coor_x" />-->
 
             <TextView
@@ -499,7 +484,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_below="@+id/tilt_btn"
-                android:layout_alignEnd="@+id/tilt_btn"
+                android:layout_alignRight="@+id/tilt_btn"
                 android:layout_alignParentRight="true"/>
         </RelativeLayout>
 
