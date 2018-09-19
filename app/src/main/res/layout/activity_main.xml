@@ -19,7 +19,7 @@
         android:layout_width="598dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="TEAM SeVenTEEN_17"
+        android:text="Group9"
         android:id="@+id/textView4"
         android:layout_gravity="center_horizontal"
         style="@style/AppTheme"
@@ -370,21 +370,6 @@
                 android:layout_toEndOf="@+id/dir"
                 android:layout_alignTop="@+id/coor_x"
                 android:layout_marginLeft="20dp"/>
-
-            <!--<Button-->
-            <!--style="@style/Widget.AppCompat.Button.Colored"-->
-            <!--android:layout_width="110dp"-->
-            <!--android:layout_height="40dp"-->
-            <!--android:text="START"-->
-            <!--android:id="@+id/btn_start"-->
-            <!--android:background="@drawable/round_btn"-->
-            <!--android:textColor="#ffffff"-->
-            <!--android:radius="20dp"-->
-            <!--android:onClick="start"-->
-            <!--android:textSize="18dp"-->
-            <!--android:layout_marginLeft="20dp"-->
-            <!--android:layout_alignTop="@+id/btn_setXY"-->
-            <!--android:layout_toEndOf="@+id/btn_setXY" />-->
 
         </RelativeLayout>
 
