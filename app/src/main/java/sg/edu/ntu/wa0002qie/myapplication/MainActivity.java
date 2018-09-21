@@ -631,7 +631,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    tConversationAA.add("Group 17:  " + writeMessage);
+                    tConversationAA.add("Group 9:  " + writeMessage);
                     Toast.makeText(MainActivity.this, "SEND", Toast.LENGTH_SHORT).show();
                     break;
 

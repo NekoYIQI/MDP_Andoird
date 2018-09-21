@@ -477,7 +477,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Team 17 - 2016/2017 Semester I"
+                android:text="Group 9 - 2018/2019 Semester I"
                 android:id="@+id/textView13"
                 android:textSize="10dp"
                 android:textColor="#063b41"
