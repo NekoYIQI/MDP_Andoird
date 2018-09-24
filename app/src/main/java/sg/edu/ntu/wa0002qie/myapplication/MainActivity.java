@@ -1153,7 +1153,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String addr = data.getExtras().getString(BluetoothDevicesActivity.EXTRA_DEVICE_ADDRESS);
         BluetoothDevice device = BA.getRemoteDevice(addr);
         // connect to the device
-        chatService.connect(device, true);
+        chatService.connect(device, false);
     }
 
     @Override
