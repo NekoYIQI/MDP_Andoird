@@ -267,7 +267,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     String sendPos = x_coordinate.getText().toString() + ","
                             + y_coordinate.getText().toString() + ","
                             + direction.getText().toString();
-                    sendMessage("start," + sendPos);
+                    sendMessage("EX_START");
+//                    sendMessage("From " + sendPos);
                     startTimeExplore = SystemClock.uptimeMillis();
                     customerHandler.post(updateTimerThreadExplore);
                 }
@@ -282,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if(isChecked){
-                    sendMessage("ro,\n");
+                    sendMessage("FP_START");
                     startTimeFastest = SystemClock.uptimeMillis();
                     customerHandler.post(updateTimerThreadFastest);
                 }
