@@ -35,7 +35,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import android.support.v7.app.ActionBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Handler customerHandler = new Handler();
     private Arena arena;
     private ArenaThread thread;
+    //original android environment string
     private String gridString = "GRID 20 15 2 18 2 19 0 0 0 0 0 0 0";
     private int[] intArray = new int[300];
 
@@ -305,8 +305,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     // init the whole android environment
     private void init(){
-        // default value for the robot position
+        // default value for map string
         gridString = "GRID 20 15 2 18 2 19 0 0 0 0 0 0 0";
+        // default value for robot position
         x_coordinate.setText("2", TextView.BufferType.EDITABLE);
         y_coordinate.setText("19", TextView.BufferType.EDITABLE);
         direction.setText("180");
@@ -490,7 +491,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     };
 
     public void goStraight(){
-        sendMessage("INSTR F");
+        sendMessage("F");
         try {
             decodeString = decodeRobotString_algo("{go:[F]}");
             if(decodeString != null)
@@ -501,7 +502,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void turnLeft(){
-        sendMessage("INSTR L");
+        sendMessage("L");
         try {
             decodeString = decodeRobotString_algo("{go:[L]}");
             if(decodeString != null)
@@ -511,7 +512,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void turnRight(){
-        sendMessage("INSTR R");
+        sendMessage("R");
         try {
             decodeString = decodeRobotString_algo("{go:[R]}");
             if(decodeString != null)
