@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 spArray[x][y] = 0;
             }
         }
-//        drawSp(new String[] {"F3", "R", "F5", "L", "F8", "R", "F7", "L", "F7"});
+//        drawShortestPath(new String[] {"F3", "R", "F5", "L", "F8", "R", "F7", "L", "F7"});
 
         arena.setObstacles(obstacleArray);
         arena.setSpArray(spArray);
@@ -604,7 +604,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             fConversationAA.add(mConnectedDevice + " : " + readMsg);
                             String[] fastestSteps = readMsg.replace("sp","").split(",");
                             //spSteps = Arrays.asList(fastestSteps);
-                            drawSp(fastestSteps);
+                            drawShortestPath(fastestSteps);
 
                         } catch(Exception e){
                             e.printStackTrace();
@@ -701,7 +701,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /*
         draw out the shortest path
     */
-    public void drawSp(String[] steps){
+    public void drawShortestPath(String[] steps){
         int d = 180;
         int movement = 0;
         // set a pointer pointing to the drawing square
@@ -773,24 +773,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     // not necessary for now
-    public void runSp() throws JSONException{
-        Log.d(TAG, "runSp()");
+    public void runShortestPath() throws JSONException{
+        Log.d(TAG, "runShortestPath()");
         for(String step: spSteps){
             move(step);
             if(dir.equals("F")){
                 Log.d("run:",String.valueOf(run));
                 for(int i = 0; i < run; i++){
-                    decodeString = decodeRobotString_algo("{go:[F]}");
+                    decodeString = decodeRobotString_algo(dir);
                     if(decodeString != null)
                         updateGridArray(toIntArray(decodeString));
                 }
             }
             else if(dir.equals("L")){
-                decodeString = decodeRobotString_algo("{go:[L]}");
+                decodeString = decodeRobotString_algo(dir);
                 updateGridArray(toIntArray(decodeString));
             }
             else if(dir.equals("R")){
-                decodeString = decodeRobotString_algo("{go:[R]}");
+                decodeString = decodeRobotString_algo(dir);
                 updateGridArray(toIntArray(decodeString));
             }
             try {
@@ -802,7 +802,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     /*
-        decode the json format string and update the robot status correspondingly
+        update the robot status according to the instruction string
      */
     public String decodeRobotString_algo(String s)throws JSONException{
 //        jsonObj = new JSONObject(s);
@@ -866,7 +866,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     break;
             }
         }
-        // check whether the robot is moving out of bound
+        // return null if the robot is moving out of bound
         if(robotX < 2 || robotX > 14 || robotY < 2 || robotY > 19)
             return null;
         return decodeRobotString(robotX, robotY, robotD);
@@ -890,7 +890,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         used to set the robot status and update the grid string
      */
     public String decodeRobotString(int x, int y, int d){
-        String decode = "";
         String hx = "";
         String hy = "";
         String bx = String.valueOf(x);
@@ -977,7 +976,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         // delay the status updating by 1 sec
         mMyHandler.postDelayed(mRunnable, 1000);
-        decode = "GRID 20 15 " + hx + " " + hy + " " + bx + " " + by + " 0 0 0 0 0 0 0 0";
+        String decode = "GRID 20 15 " + hx + " " + hy + " " + bx + " " + by + " 0 0 0 0 0 0 0 0";
 
         xStatus = x;
         yStatus = y;
