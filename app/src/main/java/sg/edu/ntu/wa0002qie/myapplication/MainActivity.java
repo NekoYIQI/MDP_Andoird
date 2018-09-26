@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Handler customerHandler = new Handler();
     private Arena arena;
     private ArenaThread thread;
-    //original android environment string
+    //original android environment
     private String gridString = "GRID 20 15 2 18 2 19 0 0 0 0 0 0 0";
     private int[] intArray = new int[300];
 
@@ -264,9 +264,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if(isChecked){
-                    String sendPos = x_coordinate.getText().toString() + ","
-                            + y_coordinate.getText().toString() + ","
-                            + direction.getText().toString();
+//                    String sendPos = x_coordinate.getText().toString() + " "
+//                            + y_coordinate.getText().toString() + " "
+//                            + direction.getText().toString();
                     sendMessage("EX_START");
 //                    sendMessage("From " + sendPos);
                     startTimeExplore = SystemClock.uptimeMillis();
@@ -491,9 +491,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     };
 
     public void goStraight(){
-        sendMessage("F");
+        String forwardMsg = "F";
+        sendMessage(forwardMsg);
         try {
-            decodeString = decodeRobotString_algo("{go:[F]}");
+            decodeString = decodeRobotString_algo(forwardMsg);
             if(decodeString != null)
                 updateGridArray(toIntArray(decodeString));
         } catch (JSONException e){}
@@ -502,9 +503,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void turnLeft(){
-        sendMessage("L");
+        String leftMsg = "L";
+        sendMessage(leftMsg);
         try {
-            decodeString = decodeRobotString_algo("{go:[L]}");
+            decodeString = decodeRobotString_algo(leftMsg);
             if(decodeString != null)
                 updateGridArray(toIntArray(decodeString));
         } catch (JSONException e){}
@@ -512,9 +514,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void turnRight(){
-        sendMessage("R");
+        String rightMsg = "R";
+        sendMessage(rightMsg);
         try {
-            decodeString = decodeRobotString_algo("{go:[R]}");
+            decodeString = decodeRobotString_algo(rightMsg);
             if(decodeString != null)
                 updateGridArray(toIntArray(decodeString));
         } catch (JSONException e){}
@@ -802,33 +805,34 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         decode the json format string and update the robot status correspondingly
      */
     public String decodeRobotString_algo(String s)throws JSONException{
-        jsonObj = new JSONObject(s);
-        String decode = jsonObj.getString("go");
-        decode = decode.replace("BOT_POS","");
+//        jsonObj = new JSONObject(s);
+//        String decode = jsonObj.getString("go");
 //        decode = decode.replace("]","");
         int robotX = xStatus;
         int robotY = yStatus;
         int robotD = dStatus;
 
         // move forward
-        if(decode.equals("\"F\"")){
+//        if(decode.equals("\"F\"")){
+        if("F".equals(s)){
             switch(dStatus){
-                case 0:
+                case 0: //if head up
                     robotY = yStatus + 1;
                     break;
-                case 90:
+                case 90: //if head to right
                     robotX = xStatus - 1;
                     break;
-                case 180:
+                case 180: //if head down
                     robotY = yStatus - 1;
                     break;
-                case 270:
+                case 270: //if head to right
                     robotX = xStatus + 1;
                     break;
             }
         }
         // turn left
-        if(decode.equals("\"L\"")){
+//        if(decode.equals("\"L\"")){
+        if("L".equals(s)){
             switch(dStatus){
                 case 0:
                     robotD = 270;
@@ -845,7 +849,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
         // turn right
-        if(decode.equals("\"R\"")){
+//        if(decode.equals("\"R\"")){
+        if("R".equals(s)){
             switch(dStatus){
                 case 0:
                     robotD = 90;
@@ -864,7 +869,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // check whether the robot is moving out of bound
         if(robotX < 2 || robotX > 14 || robotY < 2 || robotY > 19)
             return null;
-        return decodeRobotString_(robotX, robotY, robotD);
+        return decodeRobotString(robotX, robotY, robotD);
     }
 
     // AMD json decoding
@@ -878,13 +883,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Integer robotY = Integer.parseInt(array[1]);
         Integer robotD = Integer.parseInt(array[2]);
 
-        return decodeRobotString_(robotX, robotY, robotD);
+        return decodeRobotString(robotX, robotY, robotD);
     }
 
     /*
         used to set the robot status and update the grid string
      */
-    public String decodeRobotString_(int x, int y, int d){
+    public String decodeRobotString(int x, int y, int d){
         String decode = "";
         String hx = "";
         String hy = "";
@@ -1236,20 +1241,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         set the postion of the robot
      */
     public void setRobot(){
-        String newPos = "{go:[";
-        newPos += x_coordinate.getText().toString() + ",";
-        newPos += y_coordinate.getText().toString() + ",";
-        newPos += direction.getText().toString() + "]}";
+//        String newPos = "{go:[";
+//        newPos += x_coordinate.getText().toString() + ",";
+//        newPos += y_coordinate.getText().toString() + ",";
+//        newPos += direction.getText().toString() + "]}";
+        String newPos = "";
+        newPos += x_coordinate.getText().toString() + " ";
+        newPos += y_coordinate.getText().toString() + " ";
+        newPos += direction.getText().toString();
 
-        try {
-            decodeString = decodeRobotString(newPos);
-            updateGridArray(toIntArray(decodeString));
+//        try {
+//            decodeString = decodeRobotString(newPos);
+            updateGridArray(toIntArray(newPos));
             Toast.makeText(getApplicationContext(), "Robot Set", Toast.LENGTH_SHORT).show();
             Log.d("setPosition: ", newPos);
-        } catch (JSONException e) {
-            Toast.makeText(getApplicationContext(), "Failed to set robot", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
+//        } catch (JSONException e) {
+//            Toast.makeText(getApplicationContext(), "Failed to set robot", Toast.LENGTH_SHORT).show();
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -1258,7 +1267,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         int x = Integer.parseInt(temp[0]);
         int y = Integer.parseInt(temp[1]);
         int d = Integer.parseInt(temp[2]);
-        decodeString = decodeRobotString_(x, y, d);
+        decodeString = decodeRobotString(x, y, d);
         updateGridArray(toIntArray(decodeString));
         Toast.makeText(getApplicationContext(), "Robot Set", Toast.LENGTH_SHORT).show();
     }
