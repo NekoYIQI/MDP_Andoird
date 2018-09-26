@@ -419,10 +419,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if(string.length() > 0){
             // if the string contains a \n symbol, then its the one send to arduino
-            if(!string.contains("\n")) {
-                // string send to pc
-                string = "pa" + string + "\n";
-            }
+//            if(!string.contains("\n")) {
+//                // string send to pc
+//                string = string + "\n";
+//            }
             byte[] msgSend = string.getBytes();
             chatService.write(msgSend);
             // reset buffer to zero
@@ -490,7 +490,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     };
 
     public void goStraight(){
-        sendMessage("rF1,B,\n");
+        sendMessage("INSTR F");
         try {
             decodeString = decodeRobotString_algo("{go:[F]}");
             if(decodeString != null)
@@ -501,7 +501,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void turnLeft(){
-        sendMessage("rL,B,\n");
+        sendMessage("INSTR L");
         try {
             decodeString = decodeRobotString_algo("{go:[L]}");
             if(decodeString != null)
@@ -511,7 +511,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void turnRight(){
-        sendMessage("rR,B,\n");
+        sendMessage("INSTR R");
         try {
             decodeString = decodeRobotString_algo("{go:[R]}");
             if(decodeString != null)
@@ -580,16 +580,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 case MESSAGE_READ:
                     byte[] read = (byte[]) msg.obj;
                     String readMsg = new String(read, 0, msg.arg1);
-                    if(readMsg.contains("grid")){
-                        Log.d(TAG, "receive the grid string");
-
+                    if(readMsg.contains("MAP")){
+                        Log.d(TAG, "receive the map string");
                         // the readMessage is in a hex format
                         fConversationAA.add(mConnectedDevice + " : " + readMsg);
-                        //stepMovement(readMsg.split("grid")[0]);
-                        setRobot(readMsg.split("grid")[0]);
-                        String grid = readMsg.split("grid")[1];
-                        obstacleArray = decodeObstacleString(grid);
+                        String map = readMsg.split(" ")[1];
+                        obstacleArray = decodeObstacleString(map);
                         updateObstacleArray(obstacleArray);
+
+                    }
+                    else if(readMsg.contains("BOT_POS")){
+                        Log.d(TAG, "receive robot position");
+                        // set the robot position
+                        setRobot(readMsg.split(" ")[1]);
 
                     }
                     else if(readMsg.contains("sp")){
@@ -800,8 +803,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public String decodeRobotString_algo(String s)throws JSONException{
         jsonObj = new JSONObject(s);
         String decode = jsonObj.getString("go");
-        decode = decode.replace("[","");
-        decode = decode.replace("]","");
+        decode = decode.replace("BOT_POS","");
+//        decode = decode.replace("]","");
         int robotX = xStatus;
         int robotY = yStatus;
         int robotD = dStatus;
@@ -1251,8 +1254,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public void setRobot(String s){
         String[] temp = s.split(",");
-        int x = Integer.parseInt(temp[1]);
-        int y = Integer.parseInt(temp[0]);
+        int x = Integer.parseInt(temp[0]);
+        int y = Integer.parseInt(temp[1]);
         int d = Integer.parseInt(temp[2]);
         decodeString = decodeRobotString_(x, y, d);
         updateGridArray(toIntArray(decodeString));
