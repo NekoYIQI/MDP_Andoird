@@ -1265,6 +1265,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         newPos += x_coordinate.getText().toString() + " ";
         newPos += y_coordinate.getText().toString() + " ";
         newPos += direction.getText().toString();
+        sendMessage(newPos);
 
         try {
             decodeString = decodeRobotString_algo("");
