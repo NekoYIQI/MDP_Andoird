@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int xStatus = 2;
     private int yStatus = 19;
     private int dStatus = 180;
+    private int[][] arrowArray = new int[20][15];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -340,12 +341,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             for(int y = 0; y < 15; y++){
                 obstacleArray[x][y] = 0;
                 spArray[x][y] = 0;
+                arrowArray[x][y] = 0;
             }
         }
+//        arrowArray[4][4] = 2;
 //        drawShortestPath(new String[] {"F3", "R", "F5", "L", "F8", "R", "F7", "L", "F7"});
 
         arena.setObstacles(obstacleArray);
         arena.setSpArray(spArray);
+        arena.setArrowArray(arrowArray);
         arenaDisplay = (RelativeLayout) findViewById(R.id.arenaView);
         arenaDisplay.addView(arena);
     }
@@ -440,11 +444,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         if(string.length() > 0){
-            // if the string contains a \n symbol, then its the one send to arduino
-//            if(!string.contains("\n")) {
-//                // string send to pc
-//                string = string + "\n";
-//            }
             byte[] msgSend = string.getBytes();
             chatService.write(msgSend);
             // reset buffer to zero
@@ -827,15 +826,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         update the robot status according to the instruction string
      */
     public String decodeRobotString_algo(String s)throws JSONException{
-//        jsonObj = new JSONObject(s);
-//        String decode = jsonObj.getString("go");
-//        decode = decode.replace("]","");
         int robotX = xStatus;
         int robotY = yStatus;
         int robotD = dStatus;
 
         // move forward
-//        if(decode.equals("\"F\"")){
         if("F".equals(s)){
             switch(dStatus){
                 case 0: //if head up
@@ -853,7 +848,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
         // turn left
-//        if(decode.equals("\"L\"")){
         if("L".equals(s)){
             switch(dStatus){
                 case 0:
@@ -871,7 +865,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
         // turn right
-//        if(decode.equals("\"R\"")){
         if("R".equals(s)){
             switch(dStatus){
                 case 0:

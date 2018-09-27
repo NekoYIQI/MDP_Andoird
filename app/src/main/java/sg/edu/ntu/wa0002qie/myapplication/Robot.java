@@ -4,11 +4,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 public class Robot {
     private int[] gridSettings;
     private int[][] obstacleArray = new int[20][15];
     private int[][] spArray = new int[20][15];
+    private int[][] arrowArray = new int[20][15];
     private int X;
     private int Y;
     private int _X;
@@ -17,6 +20,20 @@ public class Robot {
     private Canvas canvas;
     private static int size = 0;
     private static final String TAG = "Robot";
+
+    public void setUpArrow(Drawable upArrow) {
+        this.upArrow = upArrow;
+    }
+    public void setLeftArrow(Drawable leftArrow) {
+        this.leftArrow = leftArrow;
+    }
+    public void setRightArrow(Drawable rightArrow) {
+        this.rightArrow = rightArrow;
+    }
+
+    private Drawable upArrow;
+    private Drawable leftArrow;
+    private Drawable rightArrow;
 
     public Robot(){
         super();
@@ -64,6 +81,23 @@ public class Robot {
                     drawCell(j + 1, i + 1, gridSize, Color.parseColor("#333333"), canvas);
             }
 
+
+        }
+
+        // Arrows
+        for(int i = 0 ; i < 20; i++){
+            for(int j = 0; j < 15; j++) {
+                if (this.arrowArray[i][j] == 0)        // unexplored cell
+                    drawCell(j + 1, i + 1, gridSize, Color.TRANSPARENT, canvas);
+
+                else if (this.arrowArray[i][j] == 1)   // empty cell
+                    drawCell(j + 1, i + 1, gridSize, Color.parseColor("#FFFDE7"), canvas);
+
+                else                                   // arrow
+                {
+                    drawImage(j + 1, i + 1, gridSize, upArrow, canvas);
+                }
+            }
         }
 
         // START
@@ -140,6 +174,18 @@ public class Robot {
         canvas.drawRect(new RectF(X,Y,_X,_Y), paint);
     }
 
+    public void drawImage(int i, int j, int gridSize, Drawable d, Canvas canvas){
+        Drawable drawable = d;
+        X = i * gridSize - gridSize / 2;
+        Y = j * gridSize - gridSize / 2;
+        _X = i * gridSize + gridSize / 2;
+        _Y = j * gridSize + gridSize / 2;
+        // paint the fill in color
+        paint.setStyle(Paint.Style.FILL);
+        drawable.setBounds(X, Y, _X, _Y);
+        drawable.draw(canvas);
+    }
+
     public void setGridSettings(int[] gridArray) {
         this.gridSettings = gridArray;
     }
@@ -150,5 +196,6 @@ public class Robot {
     public void setSpArray(int[][] spArray){
         this.spArray = spArray;
     }
+    public void setArrowArray(int[][] arrowArray){ this.arrowArray = arrowArray; }
 }
 

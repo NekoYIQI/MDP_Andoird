@@ -2,6 +2,7 @@ package sg.edu.ntu.wa0002qie.myapplication;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,14 +14,24 @@ public class Arena extends View {
     private ArenaThread thread;
     private int gridSize;
     private int[] grid;
-    private int[][] obstacles = new int[15][20];
-    private int[][] spArray = new int[15][20];
+    private int[][] obstacles = new int[20][15];
+    private int[][] spArray = new int[20][15];
+    private int[][] arrowArray = new int[20][15];
+    private Drawable upArrow;
+    private Drawable leftArrow;
+    private Drawable rightArrow;
 
     public Arena(Context context, int[] array){
         super(context);
         robot = new Robot();
         thread = new ArenaThread(this);
         thread.startThread();
+        upArrow = context.getResources().getDrawable(R.drawable.up);
+        leftArrow = context.getResources().getDrawable(R.drawable.left);
+        rightArrow = context.getResources().getDrawable(R.drawable.right);
+        robot.setUpArrow(upArrow);
+        robot.setLeftArrow(leftArrow);
+        robot.setRightArrow(rightArrow);
     }
 
     @Override
@@ -42,10 +53,12 @@ public class Arena extends View {
     public void setObstacles(int[][] obstacles){
         this.obstacles = obstacles;
     }
+    public void setArrowArray(int[][] arrowArray){ this.arrowArray = arrowArray; }
     public void update(){
         robot.setGridSettings(grid);
         robot.setObstacles(obstacles);
         robot.setSpArray(spArray);
+        robot.setArrowArray(arrowArray);
     }
 
     @Override
