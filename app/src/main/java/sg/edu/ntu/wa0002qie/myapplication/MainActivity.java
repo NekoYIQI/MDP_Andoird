@@ -48,6 +48,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private static final String TAG = "MainActivity : ";
+    private static MainActivity instance;
 
     // msg type sent from the Bluetooth Service Handler
     public static final int MESSAGE_STATE_CHANGE = 1;
@@ -65,13 +66,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final int REQUEST_ENABLE_BLUETOOTH = 3;
 
     private String mConnectedDevice= "";
-    private BluetoothAdapter BA = null;
+    private BluetoothAdapter bluetoothAdapter = null;
     private Bluetooth chatService = null;
     private Sensor accelerometer;
-    private SensorManager SM;
+    private SensorManager sensorManager;
     private Handler customerHandler = new Handler();
     private Arena arena;
-    private ArenaThread thread;
+//    private ArenaThread thread;
     //original android environment
     private String gridString = "GRID 20 15 2 18 2 19 0 0 0 0 0 0 0";
     private int[] intArray = new int[300];
@@ -83,45 +84,47 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ArrayAdapter<String> tConversationAA;
     private ArrayAdapter<String> fConversationAA;
 
-    String decodeString;
+    private String decodeString;
     // f1, f2 configuration
-    SharedPreferences preferences;
-    Handler mMyHandler = new Handler();
-    TextView robotStatus, exploreTime, fastestTime;
-    EditText x_coordinate, y_coordinate, direction;
-    EditText TextAMD;
-    ToggleButton autoManaul, explore, fastest;
-    ToggleButton tiltSensing;
-    Button update;
-    Button f1, f2;
-    ImageButton up, left, right;
-    RelativeLayout arenaDisplay;
+    private SharedPreferences preferences;
+    private Handler mMyHandler = new Handler();
+    private TextView robotStatus, exploreTime, fastestTime;
+    private EditText x_coordinate, y_coordinate, direction;
+    private EditText TextAMD;
+    private ToggleButton autoManaul, explore, fastest;
+    private ToggleButton tiltSensing;
+    private Button update;
+    private Button f1, f2;
+    private Button setXY;
 
-    boolean autoUpdate = true;
-    boolean tilt = false;
-    int[][] obstacleArray = new int[20][15];
-    ArrayList obstacleSensor = new ArrayList();
+    private ImageButton up, left, right;
+    private RelativeLayout arenaDisplay;
+
+    private boolean autoUpdate = true;
+    private boolean tilt = false;
+    private int[][] obstacleArray = new int[20][15];
+    private ArrayList obstacleSensor = new ArrayList();
     private long startTimeExplore = 0L;
     private long startTimeFastest = 0L;
-    long timeBuffExplore = 0L;
-    long timeBuffFastest = 0L;
-    long timeInMillisecondsExplore = 0L;
-    long timeInMillisecondsFastest = 0L;
-    long updateTimeExplore = 0L;
-    long updateTimeFastest = 0L;
-    StringBuffer outStringBuff;
-    JSONObject jsonObj;
+    private long timeBuffExplore = 0L;
+    private long timeBuffFastest = 0L;
+    private long timeInMillisecondsExplore = 0L;
+    private long timeInMillisecondsFastest = 0L;
+    private long updateTimeExplore = 0L;
+    private long updateTimeFastest = 0L;
+    private StringBuffer outStringBuff;
+    private JSONObject jsonObj;
 
     // fastest path
-    String dir = "";
-    int run = 0;
-    List<String> spSteps;
-    int[][] spArray = new int[20][15];
+    private String dir = "";
+    private int run = 0;
+    private List<String> spSteps;
+    private int[][] spArray = new int[20][15];
 
     // robot default position
-    int xStatus = 2;
-    int yStatus = 19;
-    int dStatus = 180;
+    private int xStatus = 2;
+    private int yStatus = 19;
+    private int dStatus = 180;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,18 +134,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        BA = BluetoothAdapter.getDefaultAdapter();
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         // If the adapter is null, then Bluetooth is not supported
-        if (BA == null) {
+        if (bluetoothAdapter == null) {
             Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
+        // Instantiate instance
+        instance = this;
+
         // Tilt Sensing
-        SM = (SensorManager) getSystemService(SENSOR_SERVICE);
-        accelerometer = SM.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        SM.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
         // data recorded in the SettingActivity
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -170,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         up = (ImageButton)findViewById(R.id.btn_up);
         left = (ImageButton)findViewById(R.id.btn_left);
         right = (ImageButton)findViewById(R.id.btn_right);
+        setXY = (Button)findViewById(R.id.btn_setXY);
 
         // initializing the environment
         init();
@@ -210,6 +217,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 Log.d(TAG, "Right arrow clicked");
                 turnRight();
             }
+        });
+        setXY.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "set X and Y");
+                //pass the new coordinate of robot to arena and draw the new map
+                setRobot();
+            }
+
         });
 
         // the update button only can be used when the auto button is set to off
@@ -303,9 +319,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
+    public static MainActivity getInstance(){
+        return instance;
+    }
+
     // init the whole android environment
     private void init(){
         // default value for map string
+        Log.d("MainActivity", "Init start");
         gridString = "GRID 20 15 2 18 2 19 0 0 0 0 0 0 0";
         // default value for robot position
         x_coordinate.setText("2", TextView.BufferType.EDITABLE);
@@ -313,7 +334,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         direction.setText("180");
         intArray = toIntArray(gridString);
         arena = new Arena(this, intArray);
-        arena.setClickable(false);
+        arena.setClickable(true);
         arena.setGridArray(intArray);
         for(int x = 0; x < 20; x++){
             for(int y = 0; y < 15; y++){
@@ -333,7 +354,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onStart(){
         super.onStart();
         Log.e(TAG, "++ ON START ++");
-        if(!BA.isEnabled()) {
+        if(!bluetoothAdapter.isEnabled()) {
             Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(turnOn, REQUEST_ENABLE_BLUETOOTH);
             Toast.makeText(getApplicationContext(), "Disabled bluetooth", Toast.LENGTH_SHORT).show();
@@ -375,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
         // Resume the Tilt Sensing
-        SM.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -383,7 +404,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Log.d(TAG, "++ ON PAUSE ++");
         super.onPause();
         // sensor on pause
-        SM.unregisterListener(this);
+        sensorManager.unregisterListener(this);
     }
 
     @Override
@@ -403,7 +424,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void ensureDiscoverable(){
         Log.d(TAG, "ensure discoverable");
-        if(BA.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+        if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent requireDiscoverable = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             requireDiscoverable.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
             startActivity(requireDiscoverable);
@@ -514,6 +535,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void turnRight(){
+        Log.d(TAG, "Robot turn right");
         String rightMsg = "R";
         sendMessage(rightMsg);
         try {
@@ -1160,7 +1182,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void connectDevice(Intent data){
         // get the connected device's MAC address
         String addr = data.getExtras().getString(BluetoothDevicesActivity.EXTRA_DEVICE_ADDRESS);
-        BluetoothDevice device = BA.getRemoteDevice(addr);
+        BluetoothDevice device = bluetoothAdapter.getRemoteDevice(addr);
         // connect to the device
         chatService.connect(device, false);
     }
@@ -1176,7 +1198,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Intent intent = null;
         switch(item.getItemId()){
             case R.id.connect_devices:
-                if (!BA.isEnabled()) {
+                if (!bluetoothAdapter.isEnabled()) {
                     Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(turnOn, 0);
                     Toast.makeText(getApplicationContext(), "Bluetooth Enable", Toast.LENGTH_SHORT).show();
@@ -1193,7 +1215,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 ensureDiscoverable();
                 break;
             case R.id.exit:
-                BA.disable();
+                bluetoothAdapter.disable();
                 System.exit(0);
                 Toast.makeText(this, "exit", Toast.LENGTH_SHORT).show();
                 return true;
@@ -1236,30 +1258,32 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         fastestTime.setText("00:00:00");
     }
 
-    /*
-        set the postion of the robot
-     */
+    // set the text view when click on map
+    public void setCoordinate(int x, int y){
+        x_coordinate.setText(x+"", TextView.BufferType.EDITABLE);
+        y_coordinate.setText(y+"", TextView.BufferType.EDITABLE);
+        xStatus = x;
+        yStatus = y;
+    }
+
+    // set the postion of the robot on the map
     public void setRobot(){
-//        String newPos = "{go:[";
-//        newPos += x_coordinate.getText().toString() + ",";
-//        newPos += y_coordinate.getText().toString() + ",";
-//        newPos += direction.getText().toString() + "]}";
         String newPos = "";
         newPos += x_coordinate.getText().toString() + " ";
         newPos += y_coordinate.getText().toString() + " ";
         newPos += direction.getText().toString();
 
-//        try {
-//            decodeString = decodeRobotString(newPos);
-            updateGridArray(toIntArray(newPos));
-            Toast.makeText(getApplicationContext(), "Robot Set", Toast.LENGTH_SHORT).show();
-            Log.d("setPosition: ", newPos);
-//        } catch (JSONException e) {
-//            Toast.makeText(getApplicationContext(), "Failed to set robot", Toast.LENGTH_SHORT).show();
-//            e.printStackTrace();
-//        }
+        try {
+            decodeString = decodeRobotString_algo("");
+            if(decodeString != null)
+                updateGridArray(toIntArray(decodeString));
+        } catch (JSONException e){}
+        mMyHandler.postDelayed(mRunnable, 1000);
 
+        Toast.makeText(getApplicationContext(), "Robot Set", Toast.LENGTH_SHORT).show();
+        Log.d("setPosition: ", newPos);
     }
+
 
     public void setRobot(String s){
         String[] temp = s.split(",");
