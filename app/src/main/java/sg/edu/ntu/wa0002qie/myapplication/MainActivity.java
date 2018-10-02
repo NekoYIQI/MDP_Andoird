@@ -40,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -612,8 +613,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         Log.d(TAG, "receive the map string");
                         // the readMessage is in a hex format
                         fConversationAA.add(mConnectedDevice + " : " + readMsg);
-                        String map = readMsg.split(" ")[1];
-                        obstacleArray = decodeObstacleString(map);
+//                        String map = readMsg.split(":")[1];
+                        String map = readMsg.substring(4);
+                        Log.d(TAG, "Map string: "+map);
+//                        obstacleArray = decodeObstacleString(map);
+                        String[] value = map.split("");
+                        obstacleArray = decodeMapString(map);
                         updateObstacleArray(obstacleArray);
 
                     }
@@ -624,8 +629,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                     }
                     else if(readMsg.contains("ARROW")) {
-                        Log.d(TAG, "receive arrow");
-                        // decode and update arrow array
+                        Log.d(TAG, "receive arrow position");
+                        String a = readMsg.split(" ")[1];
+                        int x = Integer.parseInt(a.split(",")[0]);
+                        int y = Integer.parseInt(a.split(",")[1]);
+                        arrowArray[x][y] = 2;
+                        arena.setArrowArray(arrowArray);
                     }
                     else if(readMsg.contains("sp")){
                         try{
@@ -1010,9 +1019,39 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /*
         decode the grid string: add up the unexplored-explored with the empty-obstacle and invert it to get the result
      */
+    private int[][] decodeMapString(String mapString){
+        Log.d(TAG, "decode map string: " + mapString);
+//        char[] charArray = mapString.toCharArray();
+        String[] mapArray = mapString.split("");
+        String[] binaryMap = hexToBinary(mapArray);
+        // index representing the index of digit in the binary array
+        int index = 1;
+        int[][] result = new int[20][15];
+        for(int i = 0; i < 20; i++){
+            for(int j = 0; j < 15; j++){
+                result[i][j] = Integer.parseInt(binaryMap[index]);
+                index ++;
+            }
+        }
+        return result;
+    }
+
+    private String[] hexToBinary(String[] hexMap){
+        String binaryString = "";
+        for(int i = 1; i < hexMap.length; i++){
+            Log.d(TAG, "hexMap[i]:" + hexMap[i]);
+            String value = new BigInteger(hexMap[i], 16).toString(2);
+            value = String.format("%4s", value).replace(" ", "0");
+            binaryString += value;
+        }
+        Log.d(TAG, "binary map " + binaryString);
+        return binaryString.split("");
+    }
+
     public int[][] decodeObstacleString(String s){
         Log.d(TAG, "decodeObstacleString: " + s);
-        String decode = s.replace("grid", "");
+//        String decode = s.replace("grid", "");
+        String decode = "";
         String[] unexploredExplored;
         String[] emptyObstacle;
         String[] received = decode.split("-");
