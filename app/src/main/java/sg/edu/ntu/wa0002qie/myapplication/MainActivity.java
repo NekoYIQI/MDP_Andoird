@@ -280,8 +280,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if(isChecked){
-                    String sendPos = x_coordinate.getText().toString() + " "
-                            + y_coordinate.getText().toString() + " "
+                    int y = 21 - Integer.parseInt(y_coordinate.getText().toString());
+                    String sendPos = x_coordinate.getText().toString() + ","
+                            + y + ","
                             + direction.getText().toString();
                     sendMessage("BOT_POS " + sendPos);
                     sendMessage("EX_START");
