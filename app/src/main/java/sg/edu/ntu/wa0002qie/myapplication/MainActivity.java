@@ -280,11 +280,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if(isChecked){
-//                    String sendPos = x_coordinate.getText().toString() + " "
-//                            + y_coordinate.getText().toString() + " "
-//                            + direction.getText().toString();
+                    String sendPos = x_coordinate.getText().toString() + " "
+                            + y_coordinate.getText().toString() + " "
+                            + direction.getText().toString();
+                    sendMessage("BOT_POS " + sendPos);
                     sendMessage("EX_START");
-//                    sendMessage("From " + sendPos);
                     startTimeExplore = SystemClock.uptimeMillis();
                     customerHandler.post(updateTimerThreadExplore);
                 }
@@ -1179,7 +1179,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String[] temp = s.split(",");
         int x = Integer.parseInt(temp[0]);
         int y = Integer.parseInt(temp[1]);
-        int d = Integer.parseInt(temp[2]);
+        int h = Integer.parseInt(temp[2]);
+        int d = (180 + 90 * (h-1)) % 360;
         decodeString = decodeRobotString(x, y, d);
         updateGridArray(toIntArray(decodeString));
         Toast.makeText(getApplicationContext(), "Robot Set", Toast.LENGTH_SHORT).show();
