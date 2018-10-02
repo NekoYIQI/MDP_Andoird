@@ -36,13 +36,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -345,10 +343,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 arrowArray[x][y] = 0;
             }
         }
-        arrowArray[4][4] = 2;
-        obstacleArray[4][3] = 2;
-        obstacleArray[4][5] = 2;
-        obstacleArray[5][5] = 2;
 //        drawShortestPath(new String[] {"F3", "R", "F5", "L", "F8", "R", "F7", "L", "F7"});
 
         arena.setObstacles(obstacleArray);
@@ -613,11 +607,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         Log.d(TAG, "receive the map string");
                         // the readMessage is in a hex format
                         fConversationAA.add(mConnectedDevice + " : " + readMsg);
-//                        String map = readMsg.split(":")[1];
                         String map = readMsg.substring(4);
                         Log.d(TAG, "Map string: "+map);
-//                        obstacleArray = decodeObstacleString(map);
-                        String[] value = map.split("");
                         obstacleArray = decodeMapString(map);
                         updateObstacleArray(obstacleArray);
 
@@ -633,6 +624,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         String a = readMsg.split(" ")[1];
                         int x = Integer.parseInt(a.split(",")[0]);
                         int y = Integer.parseInt(a.split(",")[1]);
+
                         arrowArray[x][y] = 2;
                         arena.setArrowArray(arrowArray);
                     }
@@ -647,25 +639,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             e.printStackTrace();
                         }
                     }
-//                    else if(readMsg.contains("#")){
-//                        Log.d(TAG, "receiving step command");
-//                        try {
-//                            fConversationAA.add(mConnectedDevice + " : " + readMsg);
-//                            stepMovement(readMsg);
-//                        } catch(JSONException e){
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                    else if(readMsg.contains("go")){
-//                        try{
-//                            fConversationAA.add(mConnectedDevice + " : " + readMsg);
-//                            decodeString = decodeRobotString_algo(readMsg);
-//                            if(decodeString != null)
-//                                updateGridArray(toIntArray(decodeString));
-//                        } catch(JSONException e){   // json generating error
-//                            e.printStackTrace();
-//                        }
-//                    }
                     else{
                         fConversationAA.add(mConnectedDevice + " : " + readMsg);
                         decodeString = readMsg;
@@ -1027,7 +1000,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // index representing the index of digit in the binary array
         int index = 1;
         int[][] result = new int[20][15];
-        for(int i = 0; i < 20; i++){
+        for(int i = 19; i >= 0; i--){
             for(int j = 0; j < 15; j++){
                 result[i][j] = Integer.parseInt(binaryMap[index]);
                 index ++;
@@ -1046,129 +1019,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         Log.d(TAG, "binary map " + binaryString);
         return binaryString.split("");
-    }
-
-    public int[][] decodeObstacleString(String s){
-        Log.d(TAG, "decodeObstacleString: " + s);
-//        String decode = s.replace("grid", "");
-        String decode = "";
-        String[] unexploredExplored;
-        String[] emptyObstacle;
-        String[] received = decode.split("-");
-        // remove the starting 11 and the ending 11 from the explored-unexplored string
-        unexploredExplored = received[0].split("");
-        emptyObstacle = received[1].split("");
-        // convert the hex value into binary one
-        int[][] exploreArr = convertToInt(unexploredExplored);
-        int[][] obsArr = addObstacle(exploreArr,emptyObstacle);
-        // reverse the array
-        for(int i=0;i<obsArr.length/2;i++){
-            int[] temp = obsArr[i];
-            obsArr[i] = obsArr[19-i];
-            obsArr[19-i] = temp;
-        }
-        for(int i = 0; i < 20; i++){
-            for (int j = 0; j < 15; j++) {
-                System.out.print(obsArr[i][j]);
-            }
-            System.out.println();
-        }
-        return obsArr;
-    }
-
-    public int[][] addObstacle(int[][] myMap, String[] obstacles) {
-        String[] binaryTempArray;
-        String string = "";
-        for (int i = 1; i < obstacles.length; i++){
-            int hexToInt = Integer.parseInt(obstacles[i], 16);
-            String intToBinary = Integer.toBinaryString(hexToInt);
-            // make sure all are 4 bits
-            while (intToBinary.length() < 4){
-                intToBinary = "0" + intToBinary;
-            }
-            string += intToBinary;
-        }
-        binaryTempArray = string.split("");
-        String[] binaryArray = Arrays.copyOfRange(binaryTempArray, 1, binaryTempArray.length);
-        int ptr = 0;
-        int arrLength = binaryArray.length;
-        for(int i=0;i<myMap.length;i++) {
-            for(int j=0;j<myMap[i].length;j++) {
-                if(myMap[i][j]==0) {
-                    continue;
-                } else {
-                    if(ptr==arrLength) break;
-                    myMap[i][j] += Integer.parseInt(binaryArray[ptr]);
-                    ++ptr;
-                }
-            }
-        }
-        return myMap;
-    }
-
-    /*
-        convert the string array with hax value to 2d int array with binary value
-     */
-    private int[][] convertToInt(String[] s){
-        int[][] obstacleCells = new int[20][15];
-        String[] binaryTempArray;
-        String string = "";
-        for (int i = 1; i < s.length; i++){
-            int hexToInt = Integer.parseInt(s[i], 16);
-            String intToBinary = Integer.toBinaryString(hexToInt);
-            // make sure all are 4 bits
-            while (intToBinary.length() < 4){
-                intToBinary = "0" + intToBinary;
-            }
-            string += intToBinary;
-        }
-        binaryTempArray = string.substring(2,string.length()-2).split("");
-        String[] binaryArray = Arrays.copyOfRange(binaryTempArray, 1, binaryTempArray.length);
-        for(int i = 0; i < 20; i++){
-            for (int j = 0; j < 15; j++) {
-                obstacleCells[i][j] = Integer.parseInt(binaryArray[i*15+j]);
-            }
-        }
-        return obstacleCells;
-    }
-
-    // not nececssary for now
-    public String decodeObstacleArray(String s)throws JSONException{
-        jsonObj = new JSONObject(s);
-        String decode = jsonObj.getString("Arena");
-        Integer count = 0;
-        int[] obstacleList = new int[300];
-        // get the obstacle array list
-        try{
-            JSONArray array = new JSONArray(decode);
-            for(int x = 0; x < 15; x++){
-                for(int y = 0; y < 20; y++){
-                    if(array.getJSONArray(x).getString(y).equals("1"))
-                        obstacleArray[x][y] = 1;     // is an obstacle
-                    else
-                        obstacleArray[x][y] = 0;
-                    obstacleList[count] = obstacleArray[x][y];
-                    count++;
-                }
-            }
-        } catch(JSONException e){
-            e.printStackTrace();
-        }
-
-        // change the array to hex value
-        String output = "";
-        for(int i = 0; i < 300; i = i + 4){
-            String binaryStr = ""+obstacleList[i]+obstacleList[i+1]+obstacleList[i+2]+obstacleList[i+3];
-            int binary = Integer.parseInt(binaryStr, 2);
-            String hex = Integer.toHexString(binary);
-            output += hex;
-        }
-
-        //{"grid":"ffff000000000000000000000000000000000000000000000000000000000000000000000000"}
-        //Log.d("Final Coord Obs: ",outputHex);
-        output = "{\"grid\":" + "\"" + output + "\"}";
-
-        return output;
     }
 
     /*
