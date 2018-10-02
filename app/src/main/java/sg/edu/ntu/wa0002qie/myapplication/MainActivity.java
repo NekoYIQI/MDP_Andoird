@@ -344,7 +344,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 arrowArray[x][y] = 0;
             }
         }
-//        arrowArray[4][4] = 2;
+        arrowArray[4][4] = 2;
+        obstacleArray[4][3] = 2;
+        obstacleArray[4][5] = 2;
+        obstacleArray[5][5] = 2;
 //        drawShortestPath(new String[] {"F3", "R", "F5", "L", "F8", "R", "F7", "L", "F7"});
 
         arena.setObstacles(obstacleArray);
@@ -619,6 +622,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         // set the robot position
                         setRobot(readMsg.split(" ")[1]);
 
+                    }
+                    else if(readMsg.contains("ARROW")) {
+                        Log.d(TAG, "receive arrow");
+                        // decode and update arrow array
                     }
                     else if(readMsg.contains("sp")){
                         try{
