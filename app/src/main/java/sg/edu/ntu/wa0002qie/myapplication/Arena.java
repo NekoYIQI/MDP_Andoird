@@ -17,6 +17,9 @@ public class Arena extends View {
     private int[][] obstacles = new int[20][15];
     private int[][] spArray = new int[20][15];
     private int[][] arrowArray = new int[20][15];
+
+    private int[] headPos;
+    private int[] robotPos;
     private Drawable upArrow;
     private Drawable leftArrow;
     private Drawable rightArrow;
@@ -54,11 +57,20 @@ public class Arena extends View {
         this.obstacles = obstacles;
     }
     public void setArrowArray(int[][] arrowArray){ this.arrowArray = arrowArray; }
+    public void setHeadPos(int[] headPos) {
+        this.headPos = headPos;
+    }
+    public void setRobotPos(int[] robotPos) {
+        this.robotPos = robotPos;
+    }
+
     public void update(){
-        robot.setGridSettings(grid);
+//        robot.setGridSettings(grid);
         robot.setObstacles(obstacles);
         robot.setSpArray(spArray);
         robot.setArrowArray(arrowArray);
+        robot.setHeadPos(headPos);
+        robot.setRobotPos(robotPos);
     }
 
     @Override

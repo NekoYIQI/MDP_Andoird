@@ -74,7 +74,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     //original android environment
     private String gridString = "GRID 20 15 2 18 2 19 0 0 0 0 0 0 0";
-    private int[] intArray = new int[300];
+    private int[] gridArray = new int[300];
+    private int[] headPos = new int[2];
+    private int[] robotPos = new int[2];
+
 
     // AMD
     private ListView tConversationView;
@@ -334,15 +337,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void init(){
         // default value for map string
         Log.d("MainActivity", "Init start");
-        gridString = "GRID 20 15 2 18 2 19 0 0 0 0 0 0 0";
+//        gridString = "GRID 20 15 2 18 2 19 0 0 0 0 0 0 0";
         // default value for robot position
+        headPos[0] = 2;
+        headPos[1] = 18;
+        robotPos[0] = 2;
+        robotPos[1] = 19;
         x_coordinate.setText("2", TextView.BufferType.EDITABLE);
         y_coordinate.setText("19", TextView.BufferType.EDITABLE);
         direction.setText("180");
-        intArray = toIntArray(gridString);
-        arena = new Arena(this, intArray);
+        gridArray = toIntArray(gridString);
+        arena = new Arena(this, gridArray);
+        arena.setHeadPos(headPos);
+        arena.setRobotPos(robotPos);
         arena.setClickable(true);
-        arena.setGridArray(intArray);
+//        arena.setGridArray(gridArray);
         for(int x = 0; x < 20; x++){
             for(int y = 0; y < 15; y++){
                 obstacleArray[x][y] = 0;
@@ -534,6 +543,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             decodeString = decodeRobotString_algo(leftMsg);
             if(decodeString != null)
                 updateGridArray(toIntArray(decodeString));
+            updateRobotPosition();
         } catch (JSONException e){}
         mMyHandler.postDelayed(mRunnable, 1000);
     }
@@ -614,12 +624,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         Log.d(TAG, "receive the map string");
                         // the readMessage is in a hex format
                         fConversationAA.add(mConnectedDevice + " : " + readMsg);
-                        String map = readMsg.substring(10, 310);
+                        String map = readMsg.substring(12, 312);
                         Log.d(TAG, "Map string: "+map);
-                        intArray = decodeGridString(map);
+                        gridArray = decodeGridString(map);
 //                        obstacleArray = decodeMapString(map);
 //                        updateObstacleArray(obstacleArray);
-                        updateGridArray(intArray);
+                        updateGridArray(gridArray);
                         // To-do
                         // There will be 2 strings
                         // One with 300 digits to update unexplored and explored
@@ -641,7 +651,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         Log.d(TAG, "receive arrow position");
                         String a = readMsg.split(" ")[1];
                         double raw_x = Double.parseDouble(a.split(",")[0]);
-                        double raw_y = Double.parseDouble(a.split(",")[1] + 1);
+                        double raw_y = Double.parseDouble(a.split(",")[1]) + 1;
                         double sign_x = Math.signum(raw_x);
                         double sign_y = Math.signum(raw_y);
                         int relative_x = (int)((raw_x - sign_x * 5) / 10);
@@ -1047,6 +1057,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // delay the status updating by 1 sec
         mMyHandler.postDelayed(mRunnable, 1000);
         String decode = "GRID 20 15 " + hx + " " + hy + " " + bx + " " + by + " 0 0 0 0 0 0 0 0";
+        headPos[0] = Integer.parseInt(hx);
+        headPos[1] = Integer.parseInt(hy);
+        robotPos[0] = Integer.parseInt(bx);
+        robotPos[1] = Integer.parseInt(by);
 
         xStatus = x;
         yStatus = y;
@@ -1094,6 +1108,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if(autoUpdate == true){
             arena.setObstacles(list);
         }
+    }
+
+    public void updateRobotPosition(){
+        arena.setHeadPos(headPos);
+        arena.setRobotPos(robotPos);
     }
 
     /*

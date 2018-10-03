@@ -8,7 +8,9 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 public class Robot {
-    private int[] gridSettings;
+    private int[] gridSettings; // string of length 300 with explore information
+    private int[] headPos = new int[2];
+    private int[] robotPos = new int[2];
     private int[][] obstacleArray = new int[20][15];
     private int[][] spArray = new int[20][15];
     private int[][] arrowArray = new int[20][15];
@@ -20,6 +22,9 @@ public class Robot {
     private Canvas canvas;
     private static int size = 0;
     private static final String TAG = "Robot";
+    private final static int ROW = 20;
+    private final static int COLUMN = 15;
+
 
     public void setUpArrow(Drawable upArrow) {
         this.upArrow = upArrow;
@@ -50,20 +55,25 @@ public class Robot {
         setCanvas(canvas);
         this.size = gridSize;
 
-        int row = gridSettings[0],  //20
-                col = gridSettings[1],  //15
-                rHeadX = gridSettings[2],  // center of the head
-                rHeadY = gridSettings[3],
-                rRobotX = gridSettings[4],  // center of the robot
-                rRobotY = gridSettings[5];
+//        int ROW = gridSettings[0],  //20
+//                COLUMN = gridSettings[1],  //15
+//                rHeadX = gridSettings[2],  // center of the head
+//                rHeadY = gridSettings[3],
+//                rRobotX = gridSettings[4],  // center of the robot
+//                rRobotY = gridSettings[5];
+
+        int rHeadX = headPos[0];
+        int rHeadY = headPos[1];
+        int rRobotX = robotPos[0];
+        int rRobotY = robotPos[1];
 
         boolean directionUD = false,
                 directionLR = false;
 
 
         // BG
-        for (int i = 1; i <= col; i++){
-            for (int j = 1; j <= row; j++){
+        for (int i = 1; i <= COLUMN; i++){
+            for (int j = 1; j <= ROW; j++){
                 drawCell(i, j, gridSize, Color.parseColor("#FFF9C4"), canvas);
             }
         }
@@ -102,13 +112,13 @@ public class Robot {
 
         // START
         for (int i = 1; i <= 3; i++){
-            for (int j = row-2; j <= row; j++){
+            for (int j = ROW-2; j <= ROW; j++){
                 drawCell(i, j, gridSize, Color.parseColor("#E0E0E0"), canvas);
             }
         }
 
         // GOAL
-        for (int i = col-2; i <= col; i++){
+        for (int i = COLUMN-2; i <= COLUMN; i++){
             for (int j = 1; j <= 3; j++){
                 drawCell(i, j, gridSize, Color.parseColor("#efa1bfc7"), canvas);
             }
@@ -197,5 +207,11 @@ public class Robot {
         this.spArray = spArray;
     }
     public void setArrowArray(int[][] arrowArray){ this.arrowArray = arrowArray; }
+    public void setHeadPos(int[] headPos) {
+        this.headPos = headPos;
+    }
+    public void setRobotPos(int[] robotPos) {
+        this.robotPos = robotPos;
+    }
 }
 
