@@ -610,15 +610,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 case MESSAGE_READ:
                     byte[] read = (byte[]) msg.obj;
                     String readMsg = new String(read, 0, msg.arg1);
-                    if(readMsg.contains("MAP")){
+                    if(readMsg.contains("grid")){
                         Log.d(TAG, "receive the map string");
                         // the readMessage is in a hex format
                         fConversationAA.add(mConnectedDevice + " : " + readMsg);
-                        String map = readMsg.substring(4);
+                        String map = readMsg.substring(10, 310);
                         Log.d(TAG, "Map string: "+map);
-                        obstacleArray = decodeMapString(map);
-                        updateObstacleArray(obstacleArray);
+                        intArray = decodeGridString(map);
+//                        obstacleArray = decodeMapString(map);
+//                        updateObstacleArray(obstacleArray);
+                        updateGridArray(intArray);
+                        // To-do
+                        // There will be 2 strings
+                        // One with 300 digits to update unexplored and explored
+                        // Another with 75 digits (hex) to update obstacles
 
+                    }
+                    else if(readMsg.contains("obstacle")){
+                        String obstacle = readMsg.substring(4);
+                        obstacleArray = decodeMapString(obstacle);
+                        updateObstacleArray(obstacleArray);
                     }
                     else if(readMsg.contains("BOT_POS")){
                         Log.d(TAG, "receive robot position");
@@ -679,6 +690,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
     };
+
+    private int[] decodeGridString(String map) {
+        String[] string_arr = map.split("");
+        int[] int_arr = new int[300];
+        for(int i = 1; i <= 300; i++){
+            int_arr[i-1] = Integer.parseInt(string_arr[i]);
+        }
+        return int_arr;
+    }
 
     private void checkArrowCoordinate(int x, int y) {
         // arrow will be printed out
