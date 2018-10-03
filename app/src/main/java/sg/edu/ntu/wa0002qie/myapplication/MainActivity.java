@@ -681,6 +681,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     };
 
     private void checkArrowCoordinate(int x, int y) {
+        // arrow will be printed out
+        // only if the same coordinate was sent for 5 times
         if(x == arrow_x && y == arrow_y){
             counter++;
             if(counter == 5){
@@ -688,6 +690,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 counter = 0;
             }
         }
+        // if different, update the global arrow coordinate
         else {
             arrow_x = x;
             arrow_y = y;
