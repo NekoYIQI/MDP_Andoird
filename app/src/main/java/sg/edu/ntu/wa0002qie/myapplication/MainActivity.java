@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager sensorManager;
     private Handler customerHandler = new Handler();
     private Arena arena;
-//    private ArenaThread thread;
+
     //original android environment
     private String gridString = "GRID 20 15 2 18 2 19 0 0 0 0 0 0 0";
     private int[] intArray = new int[300];
@@ -125,6 +125,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int yStatus = 19;
     private int dStatus = 180;
     private int[][] arrowArray = new int[20][15];
+
+    // counter for arrow coordinate
+    private int arrow_x = 0; //global variable holding the x coordinate of arrow
+    private int arrow_y = 0; //global variable holding the y coordinate of arrow
+    private int counter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -284,8 +289,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     String sendPos = x_coordinate.getText().toString() + ","
                             + y + ","
                             + direction.getText().toString();
-                    sendMessage("BOT_POS " + sendPos);
-                    sendMessage("EX_START");
+                    sendMessage("BOT_POS " + sendPos + "\n");
+                    sendMessage("EX_START" + "\n");
                     startTimeExplore = SystemClock.uptimeMillis();
                     customerHandler.post(updateTimerThreadExplore);
                 }
@@ -315,6 +320,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         tiltSensing.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                // configure toggle button
             }
         });
 
@@ -623,11 +629,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     else if(readMsg.contains("ARROW")) {
                         Log.d(TAG, "receive arrow position");
                         String a = readMsg.split(" ")[1];
-                        int x = Integer.parseInt(a.split(",")[0]);
-                        int y = Integer.parseInt(a.split(",")[1]);
-
-                        arrowArray[x][y] = 2;
-                        arena.setArrowArray(arrowArray);
+                        double raw_x = Double.parseDouble(a.split(",")[0]);
+                        double raw_y = Double.parseDouble(a.split(",")[1] + 1);
+                        double sign_x = Math.signum(raw_x);
+                        double sign_y = Math.signum(raw_y);
+                        int relative_x = (int)((raw_x - sign_x * 5) / 10);
+                        int relative_y = (int)((raw_y - sign_y * 5) / 10);
+                        Log.d(TAG, "x received: " + relative_x + " y received: " + relative_y);
+                        int[] arrowPosition = calculateArrowPosition(relative_x, relative_y);
+                        int x = Integer.parseInt(x_coordinate.getText().toString()) + arrowPosition[0];
+                        int y = Integer.parseInt(y_coordinate.getText().toString()) + arrowPosition[1];
+                        Log.d(TAG, "robot pos: " + x_coordinate.getText().toString() + " " + y_coordinate.getText().toString());
+                        Log.d(TAG,"arrow coordinate: " + x + " " + y);
+                        checkArrowCoordinate(x, y);
                     }
                     else if(readMsg.contains("sp")){
                         try{
@@ -665,6 +679,48 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
     };
+
+    private void checkArrowCoordinate(int x, int y) {
+        if(x == arrow_x && y == arrow_y){
+            counter++;
+            if(counter == 5){
+                setArrow();
+                counter = 0;
+            }
+        }
+        else {
+            arrow_x = x;
+            arrow_y = y;
+        }
+    }
+
+    private void setArrow() {
+        arrowArray[arrow_y][arrow_x] = 2;
+        arena.setArrowArray(arrowArray);
+    }
+
+    private int[] calculateArrowPosition(int x, int y) {
+        int[] result = new int[2];
+        switch (dStatus){
+            case 0:
+                result[0] = -x;
+                result[1] = y;
+                break;
+            case 90:
+                result[0] = -y;
+                result[1] = -x;
+                break;
+            case 180:
+                result[0] = x;
+                result[1] = -y;
+                break;
+            case 270:
+                result[0] = y;
+                result[1] = x;
+                break;
+        }
+        return result;
+    }
 
     /*
         not using for now
@@ -877,20 +933,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return decodeRobotString(robotX, robotY, robotD);
     }
 
-    // AMD json decoding
-    public String decodeRobotString(String s)throws JSONException{
-        jsonObj = new JSONObject(s);
-        String decode = jsonObj.getString("go");
-        decode = decode.replace("[", "");
-        decode = decode.replace("]", "");
-        String array[] = decode.split(",");
-        Integer robotX = Integer.parseInt(array[0]);
-        Integer robotY = Integer.parseInt(array[1]);
-        Integer robotD = Integer.parseInt(array[2]);
-
-        return decodeRobotString(robotX, robotY, robotD);
-    }
-
     /*
         used to set the robot status and update the grid string
      */
@@ -995,7 +1037,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     private int[][] decodeMapString(String mapString){
         Log.d(TAG, "decode map string: " + mapString);
-//        char[] charArray = mapString.toCharArray();
         String[] mapArray = mapString.split("");
         String[] binaryMap = hexToBinary(mapArray);
         // index representing the index of digit in the binary array
@@ -1194,24 +1235,51 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event){
+        float x = event.values[0];
+        float y = event.values[1];
         if(tilt == false){
             onPause();
         }
-        if(event.values[0] > 4){
-            turnLeft();
+        if (Math.abs(x) > Math.abs(y)) {
+            if (x < -2) {
+                Log.d(TAG,"You tilt the device right");
+                turnRight();
+            }
+            if (x > 2) {
+                Log.d(TAG, "You tilt the device left");
+                turnLeft();
+            }
+        } else {
+            if (y < -2) {
+                Log.d(TAG, "You tilt the device up");
+                goStraight();
+            }
+            if (y > 2) {
+                Log.d(TAG, "You tilt the device down");
+                turnLeft();
+                turnLeft();
+
+            }
         }
-        if(event.values[0] < -5){
-            turnRight();
-        }
-        if(event.values[1] < 0){
-            goStraight();
-        }
-        if(event.values[1] > 8){
-            // reverse the direction
-            turnLeft();
-            turnLeft();
+        if (x > (-2) && x < (2) && y > (-2) && y < (2)) {
+            Log.d(TAG, "Not tilt device");
         }
     }
+//        if(event.values[0] > 4){
+//            turnLeft();
+//        }
+//        if(event.values[0] < -5){
+//            turnRight();
+//        }
+//        if(event.values[1] < 0){
+//            goStraight();
+//        }
+//        if(event.values[1] > 8){
+//            // reverse the direction
+//            turnLeft();
+//            turnLeft();
+//        }
+//    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy){
