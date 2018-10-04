@@ -1264,7 +1264,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         int x = Integer.parseInt(temp[0]);
         int y = Integer.parseInt(temp[1]);
         int h = Integer.parseInt(temp[2]);
-        int d = (180 + 90 * (h-1)) % 360;
+        int d = (180 + 90 * h) % 360;
         decodeString = decodeRobotString(x, y, d);
         updateGridArray(toIntArray(decodeString));
         Toast.makeText(getApplicationContext(), "Robot Set", Toast.LENGTH_SHORT).show();
