@@ -893,7 +893,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
         // return null if the robot is moving out of bound
-        if(robotX < 2 || robotX > 14 || robotY < 2 || robotY > 19){}
+        if(robotX < 2 || robotX > 14 || robotY < 2 || robotY > 19){
+            return;
+        }
         decodeRobotString(robotX, robotY, robotD);
     }
 
