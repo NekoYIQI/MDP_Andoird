@@ -13,7 +13,7 @@ public class Arena extends View {
     private Robot robot;
     private ArenaThread thread;
     private int gridSize;
-    private int[] grid;
+    private int[] grid; // array of 300 digits
     private int[][] obstacles = new int[20][15];
     private int[][] spArray = new int[20][15];
     private int[][] arrowArray = new int[20][15];
@@ -65,7 +65,7 @@ public class Arena extends View {
     }
 
     public void update(){
-//        robot.setGridSettings(grid);
+        robot.setGridSettings(grid);
         robot.setObstacles(obstacles);
         robot.setSpArray(spArray);
         robot.setArrowArray(arrowArray);
@@ -81,8 +81,6 @@ public class Arena extends View {
         Log.d("Arena",  "clicked");
         Log.d("Column: ",  column+"");
         Log.d("Row: ",  row+"");
-        int size = grid.length;
-        Log.d("Arena","length of gird array = "+size);
         MainActivity.getInstance().setCoordinate(column, row);
         return true;
     }

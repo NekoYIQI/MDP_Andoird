@@ -5,10 +5,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 public class Robot {
-    private int[] gridSettings; // string of length 300 with explore information
+    private int[] gridSettings; // array of length 300 with explore information
     private int[] headPos = new int[2];
     private int[] robotPos = new int[2];
     private int[][] obstacleArray = new int[20][15];
@@ -54,13 +53,6 @@ public class Robot {
     public void drawArena(Canvas canvas, int gridSize){
         setCanvas(canvas);
         this.size = gridSize;
-
-//        int ROW = gridSettings[0],  //20
-//                COLUMN = gridSettings[1],  //15
-//                rHeadX = gridSettings[2],  // center of the head
-//                rHeadY = gridSettings[3],
-//                rRobotX = gridSettings[4],  // center of the robot
-//                rRobotY = gridSettings[5];
 
         int rHeadX = headPos[0];
         int rHeadY = headPos[1];
@@ -199,7 +191,6 @@ public class Robot {
     public void setGridSettings(int[] gridArray) {
         this.gridSettings = gridArray;
     }
-
     public void setObstacles(int[][] obstacleArray) {
         this.obstacleArray = obstacleArray;
     }
