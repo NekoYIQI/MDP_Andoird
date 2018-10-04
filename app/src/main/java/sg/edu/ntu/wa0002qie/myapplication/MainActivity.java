@@ -346,17 +346,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         x_coordinate.setText("2", TextView.BufferType.EDITABLE);
         y_coordinate.setText("19", TextView.BufferType.EDITABLE);
         direction.setText("180");
-        gridArray = toIntArray(gridString);
-        arena = new Arena(this, gridArray);
+        arena = new Arena(this);
         arena.setHeadPos(headPos);
         arena.setRobotPos(robotPos);
         arena.setClickable(true);
-//        arena.setGridArray(gridArray);
+        arena.setGridArray(gridArray);
+        int index = 0;
         for(int x = 0; x < 20; x++){
             for(int y = 0; y < 15; y++){
                 obstacleArray[x][y] = 0;
                 spArray[x][y] = 0;
                 arrowArray[x][y] = 0;
+                gridArray[index++] = 0;
             }
         }
 //        drawShortestPath(new String[] {"F3", "R", "F5", "L", "F8", "R", "F7", "L", "F7"});

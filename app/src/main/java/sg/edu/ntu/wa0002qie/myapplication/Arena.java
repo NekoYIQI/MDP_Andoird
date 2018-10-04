@@ -24,7 +24,7 @@ public class Arena extends View {
     private Drawable leftArrow;
     private Drawable rightArrow;
 
-    public Arena(Context context, int[] array){
+    public Arena(Context context){
         super(context);
         robot = new Robot();
         thread = new ArenaThread(this);
