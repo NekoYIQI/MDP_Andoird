@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     // robot default position
     private int xStatus = 2;
     private int yStatus = 19;
-    private int dStatus = 180;
+    private int dStatus = 270;
     private int[][] arrowArray = new int[20][15];
 
     // counter for arrow coordinate
@@ -329,13 +329,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // default value for map string
         Log.d("MainActivity", "Init start");
         // default value for robot position
-        headPos[0] = 2;
-        headPos[1] = 18;
+        headPos[0] = 3;
+        headPos[1] = 19;
         robotPos[0] = 2;
         robotPos[1] = 19;
         x_coordinate.setText("2", TextView.BufferType.EDITABLE);
         y_coordinate.setText("19", TextView.BufferType.EDITABLE);
-        direction.setText("180");
+        direction.setText("270");
         arena = new Arena(this);
         arena.setHeadPos(headPos);
         arena.setRobotPos(robotPos);
@@ -586,7 +586,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     byte[] read = (byte[]) msg.obj;
                     String readMsg = new String(read, 0, msg.arg1);
                     if(readMsg.contains("grid")){
-                        Log.d(TAG, "receive the map string");
+                        Log.d(TAG, "receive map string ::" + readMsg);
                         // the readMessage is in a hex format
                         fConversationAA.add(mConnectedDevice + " : " + readMsg);
                         String map = readMsg.substring(12, 312);
@@ -595,18 +595,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         updateGridArray(gridArray);
                     }
                     else if(readMsg.contains("obstacle")){
+                        Log.d(TAG, "receive obstacle string ::" + readMsg);
                         String obstacle = readMsg.substring(4);
                         obstacleArray = decodeMapString(obstacle);
                         updateObstacleArray(obstacleArray);
                     }
                     else if(readMsg.contains("BOT_POS")){
-                        Log.d(TAG, "receive robot position");
+                        Log.d(TAG, "receive robot position ::" + readMsg);
                         // set the robot position
                         setRobot(readMsg.split(" ")[1]);
 
                     }
                     else if(readMsg.contains("ARROW")) {
-                        Log.d(TAG, "receive arrow position");
+                        Log.d(TAG, "receive arrow position ::" + readMsg);
                         String a = readMsg.split(" ")[1];
                         double raw_x = Double.parseDouble(a.split(",")[0]);
                         double raw_y = Double.parseDouble(a.split(",")[1]) + 1;
@@ -624,6 +625,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     }
                     else if(readMsg.contains("sp")){
                         try{
+                            Log.d(TAG, "receive fastest path ::" + readMsg);
                             fConversationAA.add(mConnectedDevice + " : " + readMsg);
                             String[] fastestSteps = readMsg.replace("sp","").split(",");
                             //spSteps = Arrays.asList(fastestSteps);
@@ -1192,8 +1194,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public void setRobot(String s){
         String[] temp = s.split(",");
-        int x = Integer.parseInt(temp[0]);
-        int y = Integer.parseInt(temp[1]);
+        int x = Integer.parseInt(temp[1]) - 1;
+        int y = 20 - Integer.parseInt(temp[0]);
         int h = Integer.parseInt(temp[2]);
         int d = (180 + 90 * h) % 360;
         decodeRobotString(x, y, d);
