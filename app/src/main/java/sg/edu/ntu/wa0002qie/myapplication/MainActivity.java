@@ -334,7 +334,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void init(){
         // default value for map string
         Log.d("MainActivity", "Init start");
-//        gridString = "GRID 20 15 2 18 2 19 0 0 0 0 0 0 0";
         // default value for robot position
         headPos[0] = 2;
         headPos[1] = 18;
@@ -554,11 +553,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void start(View v){
-        // pastart,x,y,d\n
-//        String sendPos = x_coordinate.getText().toString() + ","
-//                + y_coordinate.getText().toString() + ","
-//                + direction.getText().toString();
-//        sendMessage("pastart," + sendPos + "\n");
     }
 
     /*
@@ -1023,7 +1017,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         // delay the status updating by 1 sec
         mMyHandler.postDelayed(mRunnable, 1000);
-        String decode = "GRID 20 15 " + hx + " " + hy + " " + bx + " " + by + " 0 0 0 0 0 0 0 0";
+        String decode = hx + " " + hy + " " + bx + " " + by;
+        Log.d(TAG, "New pos: " + decode);
         headPos[0] = hx;
         headPos[1] = hy;
         robotPos[0] = bx;
@@ -1032,7 +1027,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         xStatus = x;
         yStatus = y;
         dStatus = d;
-        Log.d(TAG, "Grid decode: " + decode);
     }
 
     /*
@@ -1272,21 +1266,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Log.d(TAG, "Not tilt device");
         }
     }
-//        if(event.values[0] > 4){
-//            turnLeft();
-//        }
-//        if(event.values[0] < -5){
-//            turnRight();
-//        }
-//        if(event.values[1] < 0){
-//            goStraight();
-//        }
-//        if(event.values[1] > 8){
-//            // reverse the direction
-//            turnLeft();
-//            turnLeft();
-//        }
-//    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy){
