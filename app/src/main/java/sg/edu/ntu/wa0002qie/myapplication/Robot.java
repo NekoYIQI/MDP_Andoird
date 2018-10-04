@@ -7,20 +7,22 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
 public class Robot {
+    // array holding information of map and robot
     private int[] gridSettings; // array of length 300 with explore information
     private int[] headPos = new int[2];
     private int[] robotPos = new int[2];
     private int[][] obstacleArray = new int[20][15];
     private int[][] spArray = new int[20][15];
     private int[][] arrowArray = new int[20][15];
+
     private int X;
     private int Y;
     private int _X;
     private int _Y;
+
     private Paint paint;
     private Canvas canvas;
     private static int size = 0;
-    private static final String TAG = "Robot";
     private final static int ROW = 20;
     private final static int COLUMN = 15;
 

@@ -13,13 +13,15 @@ public class Arena extends View {
     private Robot robot;
     private ArenaThread thread;
     private int gridSize;
+
+    // array holding information of the map
     private int[] grid; // array of 300 digits
     private int[][] obstacles = new int[20][15];
     private int[][] spArray = new int[20][15];
     private int[][] arrowArray = new int[20][15];
-
     private int[] headPos;
     private int[] robotPos;
+
     private Drawable upArrow;
     private Drawable leftArrow;
     private Drawable rightArrow;

@@ -37,8 +37,6 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ArrayAdapter<String> tConversationAA;
     private ArrayAdapter<String> fConversationAA;
 
-    private String decodeString;
     // f1, f2 configuration
     private SharedPreferences preferences;
     private Handler mMyHandler = new Handler();
@@ -242,11 +239,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         autoUpdate = true;
                         arena.setObstacles(obstacleArray);
                     }
-                    if(decodeString != null){
-                        autoUpdate = true;
-                        System.out.println(decodeString);
-                        updateGridArray(toIntArray(decodeString));
-                    }
+                    autoUpdate = true;
+                    updateGridArray(gridArray);
                     autoUpdate = false;
                     Toast.makeText(MainActivity.this, "Map Updated", Toast.LENGTH_SHORT).show();
 
@@ -555,22 +549,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void start(View v){
     }
 
-    /*
-        parse a string into int array
-     */
-    public int[] toIntArray(String s){
-        Log.d("toIntArray()", s);
-        String[] stringArray = s.split(" ");
-        int len = stringArray.length-1;
-        int[] intArray = new int[len];
-
-        for(int i = 1; i < len; i++){
-            intArray[i-1] = Integer.parseInt(stringArray[i]);
-        }
-        return intArray;
-    }
-
-
     private final void setStatus(CharSequence subTitle) {
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         //final ActionBar actionBar = this.getActionBar();
@@ -614,14 +592,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         String map = readMsg.substring(12, 312);
                         Log.d(TAG, "Map string: "+map);
                         gridArray = decodeGridString(map);
-//                        obstacleArray = decodeMapString(map);
-//                        updateObstacleArray(obstacleArray);
                         updateGridArray(gridArray);
-                        // To-do
-                        // There will be 2 strings
-                        // One with 300 digits to update unexplored and explored
-                        // Another with 75 digits (hex) to update obstacles
-
                     }
                     else if(readMsg.contains("obstacle")){
                         String obstacle = readMsg.substring(4);
@@ -664,7 +635,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     }
                     else{
                         fConversationAA.add(mConnectedDevice + " : " + readMsg);
-                        decodeString = readMsg;
                     }
                     break;
 
@@ -1225,7 +1195,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         int h = Integer.parseInt(temp[2]);
         int d = (180 + 90 * h) % 360;
         decodeRobotString(x, y, d);
-        updateGridArray(toIntArray(decodeString));
         Toast.makeText(getApplicationContext(), "Robot Set", Toast.LENGTH_SHORT).show();
     }
 
@@ -1270,11 +1239,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy){
 
-    }
-
-    public void visible(){
-        Intent getVisible = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        startActivityForResult(getVisible, 0);
     }
 
 }
