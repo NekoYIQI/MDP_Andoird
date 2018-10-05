@@ -49,10 +49,6 @@ public class Bluetooth {
         mHandler = handler;
     }
 
-    public void setHandler(Handler handler){
-        mHandler = handler;
-    }
-
     // set state
     private synchronized void setState(int state) {
         Log.d(TAG, "setState() " + mState + " -> " + state);

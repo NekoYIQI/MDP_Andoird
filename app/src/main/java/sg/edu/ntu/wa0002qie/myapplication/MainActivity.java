@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Arena arena;
 
     //original android environment
-    private int[] gridArray = new int[300];
+    private int[][] gridArray = new int[20][15];
     private int[] headPos = new int[2];
     private int[] robotPos = new int[2];
 
@@ -340,13 +340,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         arena.setHeadPos(headPos);
         arena.setRobotPos(robotPos);
         arena.setClickable(true);
-        int index = 0;
         for(int x = 0; x < 20; x++){
             for(int y = 0; y < 15; y++){
                 obstacleArray[x][y] = 0;
                 spArray[x][y] = 0;
                 arrowArray[x][y] = 0;
-                gridArray[index++] = 0;
+                gridArray[x][y] = 0;
             }
         }
 //        drawShortestPath(new String[] {"F3", "R", "F5", "L", "F8", "R", "F7", "L", "F7"});
@@ -587,19 +586,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     String readMsg = new String(read, 0, msg.arg1);
                     if(readMsg.contains("grid")){
                         Log.d(TAG, "receive map string ::" + readMsg);
+                        Log.d(TAG, "grid message length ::" + readMsg.length());
                         // the readMessage is in a hex format
                         fConversationAA.add(mConnectedDevice + " : " + readMsg);
-                        String map = readMsg.substring(5, 80);
-                        Log.d(TAG, "Map string::"+map);
-                        gridArray = decodeGridString(map);
-                        updateGridArray(gridArray);
+                        if(readMsg.length() > 75) {
+                            String map = readMsg.substring(5, 80);
+                            Log.d(TAG, "Map string::" + map);
+                            gridArray = decodeMapString(map);
+                            updateGridArray(gridArray);
+                        }
                     }
                     else if(readMsg.contains("obstacle")){
                         Log.d(TAG, "receive obstacle string ::" + readMsg);
-                        String obstacle = readMsg.substring(4);
-                        obstacleArray = decodeMapString(obstacle);
-                        decodeObstacleArray(obstacleArray);
-                        updateObstacleArray(obstacleArray);
+                        Log.d(TAG, "obstacle message length ::" + readMsg.length());
+                        if(readMsg.length() > 80) {
+                            String obstacle = readMsg.substring(9, 84);
+                            obstacleArray = decodeMapString(obstacle);
+                            decodeObstacleArray(obstacleArray);
+                            updateObstacleArray(obstacleArray);
+                        }
                     }
                     else if(readMsg.contains("BOT_POS")){
                         Log.d(TAG, "receive robot position ::" + readMsg);
@@ -660,18 +665,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
     };
-
-    private int[] decodeGridString(String map) {
-        Log.d(TAG, "decode map string: " + map);
-        String[] mapArray = map.split("");
-        String[] binaryMap = hexToBinary(mapArray);
-        // index representing the index of digit in the binary array
-        int[] int_arr = new int[300];
-        for(int i = 1; i <= 300; i++){
-            int_arr[i-1] = Integer.parseInt(binaryMap[i]);
-        }
-        return int_arr;
-    }
 
     private void checkArrowCoordinate(int x, int y) {
         // arrow will be printed out
@@ -1065,7 +1058,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /*
         update robot position
      */
-    public void updateGridArray(int[] array){
+    public void updateGridArray(int[][] array){
         if(autoUpdate == true){
             Log.d("updateGridArray","true");
             arena.setGridArray(array);
@@ -1230,30 +1223,30 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if(tilt == false){
             onPause();
         }
-        if (Math.abs(x) > Math.abs(y)) {
-            if (x < -2) {
-                Log.d(TAG,"You tilt the device right");
-                turnRight();
-            }
-            if (x > 2) {
-                Log.d(TAG, "You tilt the device left");
-                turnLeft();
-            }
-        } else {
-            if (y < -2) {
-                Log.d(TAG, "You tilt the device up");
-                goStraight();
-            }
-            if (y > 2) {
-                Log.d(TAG, "You tilt the device down");
-                turnLeft();
-                turnLeft();
-
-            }
-        }
-        if (x > (-2) && x < (2) && y > (-2) && y < (2)) {
-            Log.d(TAG, "Not tilt device");
-        }
+//        if (Math.abs(x) > Math.abs(y)) {
+//            if (x < -2) {
+//                Log.d(TAG,"You tilt the device right");
+//                turnRight();
+//            }
+//            if (x > 2) {
+//                Log.d(TAG, "You tilt the device left");
+//                turnLeft();
+//            }
+//        } else {
+//            if (y < -2) {
+//                Log.d(TAG, "You tilt the device up");
+//                goStraight();
+//            }
+//            if (y > 2) {
+//                Log.d(TAG, "You tilt the device down");
+//                turnLeft();
+//                turnLeft();
+//
+//            }
+//        }
+//        if (x > (-2) && x < (2) && y > (-2) && y < (2)) {
+//            Log.d(TAG, "Not tilt device");
+//        }
     }
 
     @Override

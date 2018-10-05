@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable;
 
 public class Robot {
     // array holding information of map and robot
-    private int[] gridSettings; // array of length 300 with explore information
+    private int[][] gridSettings; // array of length 300 with explore information
     private int[] headPos = new int[2];
     private int[] robotPos = new int[2];
     private int[][] obstacleArray = new int[20][15];
@@ -66,9 +66,15 @@ public class Robot {
 
 
         // BG
-        for (int i = 1; i <= COLUMN; i++){
-            for (int j = 1; j <= ROW; j++){
-                drawCell(i, j, gridSize, Color.parseColor("#FFF9C4"), canvas);
+        int index = 0;
+        for (int i = 0; i < ROW; i++){
+            for (int j = 0; j < COLUMN; j++){
+                if(gridSettings[i][j] == 0){
+                    drawCell(j + 1, i + 1, gridSize, Color.parseColor("#FFF9C4"), canvas);
+                }
+                else if(gridSettings[i][j] == 1){
+                    drawCell(j + 1, i + 1, gridSize, Color.parseColor("#FFE7F9"), canvas);
+                }
             }
         }
 
@@ -79,7 +85,7 @@ public class Robot {
                     drawCell(j + 1, i + 1, gridSize, Color.TRANSPARENT, canvas);
 
                 else if (this.obstacleArray[i][j] == 1)   // empty cell
-                    drawCell(j + 1, i + 1, gridSize, Color.parseColor("#FFFDE7"), canvas);
+                    drawCell(j + 1, i + 1, gridSize, Color.TRANSPARENT, canvas);
 
                 else                                      // obstacle
                     drawCell(j + 1, i + 1, gridSize, Color.parseColor("#333333"), canvas);
@@ -95,7 +101,7 @@ public class Robot {
                     drawCell(j + 1, i + 1, gridSize, Color.TRANSPARENT, canvas);
 
                 else if (this.arrowArray[i][j] == 1)   // empty cell
-                    drawCell(j + 1, i + 1, gridSize, Color.parseColor("#FFFDE7"), canvas);
+                    drawCell(j + 1, i + 1, gridSize, Color.TRANSPARENT, canvas);
 
                 else                                   // arrow
                 {
@@ -190,7 +196,7 @@ public class Robot {
         drawable.draw(canvas);
     }
 
-    public void setGridSettings(int[] gridArray) {
+    public void setGridSettings(int[][] gridArray) {
         this.gridSettings = gridArray;
     }
     public void setObstacles(int[][] obstacleArray) {

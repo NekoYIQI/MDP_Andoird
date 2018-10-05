@@ -15,7 +15,7 @@ public class Arena extends View {
     private int gridSize;
 
     // array holding information of the map
-    private int[] grid; // array of 300 digits
+    private int[][] grid = new int[20][15]; // array of 300 digits
     private int[][] obstacles = new int[20][15];
     private int[][] spArray = new int[20][15];
     private int[][] arrowArray = new int[20][15];
@@ -47,7 +47,7 @@ public class Arena extends View {
         robot.drawArena(canvas, gridSize);
     }
 
-    public void setGridArray(int[] gridArray){
+    public void setGridArray(int[][] gridArray){
         Log.d("Arena", "set grid array");
         this.grid = gridArray;
     }
