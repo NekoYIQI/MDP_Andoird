@@ -589,8 +589,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         Log.d(TAG, "receive map string ::" + readMsg);
                         // the readMessage is in a hex format
                         fConversationAA.add(mConnectedDevice + " : " + readMsg);
-                        String map = readMsg.substring(12, 312);
-                        Log.d(TAG, "Map string: "+map);
+                        String map = readMsg.substring(5, 80);
+                        Log.d(TAG, "Map string::"+map);
                         gridArray = decodeGridString(map);
                         updateGridArray(gridArray);
                     }
@@ -598,6 +598,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         Log.d(TAG, "receive obstacle string ::" + readMsg);
                         String obstacle = readMsg.substring(4);
                         obstacleArray = decodeMapString(obstacle);
+                        decodeObstacleArray(obstacleArray);
                         updateObstacleArray(obstacleArray);
                     }
                     else if(readMsg.contains("BOT_POS")){
@@ -661,10 +662,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     };
 
     private int[] decodeGridString(String map) {
-        String[] string_arr = map.split("");
+        Log.d(TAG, "decode map string: " + map);
+        String[] mapArray = map.split("");
+        String[] binaryMap = hexToBinary(mapArray);
+        // index representing the index of digit in the binary array
         int[] int_arr = new int[300];
         for(int i = 1; i <= 300; i++){
-            int_arr[i-1] = Integer.parseInt(string_arr[i]);
+            int_arr[i-1] = Integer.parseInt(binaryMap[i]);
         }
         return int_arr;
     }
@@ -1025,7 +1029,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private String[] hexToBinary(String[] hexMap){
         String binaryString = "";
         for(int i = 1; i < hexMap.length; i++){
-            Log.d(TAG, "hexMap[i]:" + hexMap[i]);
+//            Log.d(TAG, "hexMap[i]:" + hexMap[i]);
             String value = new BigInteger(hexMap[i], 16).toString(2);
             value = String.format("%4s", value).replace(" ", "0");
             binaryString += value;
@@ -1037,6 +1041,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /*
         update the obstacle array(tgt with the explored path) based on the passed in array
      */
+
+    private void decodeObstacleArray(int[][] obstacleArray){
+        for(int i = 0 ; i < 20 ; i++){
+            for(int j = 0; j < 15; j++){
+                obstacleArray[i][j] += 1;
+            }
+        }
+    }
+
     public void updateObstacleArray(int[][] list){
         Log.d(TAG, "updateObstacleArray()");
         if(autoUpdate == true){
@@ -1147,7 +1160,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         xStatus = 2;
         yStatus = 19;
-        dStatus = 180;
+        dStatus = 270;
 
         tConversationAA.clear();
         fConversationAA.clear();
@@ -1179,7 +1192,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         newPos += x_coordinate.getText().toString() + " ";
         newPos += y_coordinate.getText().toString() + " ";
         newPos += direction.getText().toString();
-        sendMessage(newPos);
+        int y_send = 21 - Integer.parseInt(y_coordinate.getText().toString());
+        String message = "BOT_POS" + " " + x_coordinate.getText().toString() + " " + y_send
+                + " " + direction.getText().toString();
+        sendMessage(message);
 
         try {
             decodeRobotString_algo(newPos);
@@ -1194,8 +1210,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public void setRobot(String s){
         String[] temp = s.split(",");
-        int x = Integer.parseInt(temp[1]) - 1;
-        int y = 20 - Integer.parseInt(temp[0]);
+        int x = Integer.parseInt(temp[1]);
+        int y = 21 - Integer.parseInt(temp[0]);
         int h = Integer.parseInt(temp[2]);
         int d = (180 + 90 * h) % 360;
         decodeRobotString(x, y, d);
