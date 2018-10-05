@@ -1147,7 +1147,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         reset the system
      */
     public void reset(View v){
-        sendMessage("reset");
+//        sendMessage("reset");
         for(int i = 0; i < 20; i ++){
             for(int j = 0; j < 15; j++) {
                 obstacleArray[i][j] = 0;
