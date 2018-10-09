@@ -621,7 +621,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         Log.d(TAG, "obstacle message length ::" + readMsg.length());
                         if(readMsg.length() > 80) {
                             String obstacle = readMsg.substring(9);
-                            obstacleArray = decodeMapString(obstacle);
+                            obstacleArray = decodeObstacleArray(obstacle);
                             decodeObstacleArray(obstacleArray);
                             updateObstacleArray(obstacleArray);
                         }
@@ -686,6 +686,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
     };
+
+    private int[][] decodeObstacleArray(String obstacle) {
+        String[] obstacleArray = obstacle.split("");
+        String[] binaryObstacle = hexToBinary(obstacleArray);
+        int[][] result = new int[20][15];
+        int index = 1;
+        for(int i = 19; i >= 0; i --){
+            for(int j = 0; j < 15; j ++){
+                if(gridArray[i][j] == 1){
+                    result[i][j] = Integer.parseInt(binaryObstacle[index]);
+                    index++;
+                }
+            }
+        }
+        return result;
+
+    }
 
     private void checkArrowCoordinate(int x, int y) {
         // arrow will be printed out
