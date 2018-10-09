@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Button update;
     private Button f1, f2;
     private Button setXY;
+    private Button setWayPoint;
 
     private ImageButton up, left, right;
     private RelativeLayout arenaDisplay;
@@ -112,6 +113,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private StringBuffer outStringBuff;
 
     // fastest path
+    private int waypoint_x;
+    private int waypoint_y;
     private String dir = "";
     private int run = 0;
     private List<String> spSteps;
@@ -119,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     // robot default position
     private int xStatus = 2;
-    private int yStatus = 19;
+    private int yStatus = 2;
     private int dStatus = 270;
     private int[][] arrowArray = new int[20][15];
 
@@ -179,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         left = (ImageButton)findViewById(R.id.btn_left);
         right = (ImageButton)findViewById(R.id.btn_right);
         setXY = (Button)findViewById(R.id.btn_setXY);
+        setWayPoint = (Button)findViewById(R.id.btn_setWayPoint);
 
         // initializing the environment
         init();
@@ -228,6 +232,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 setRobot();
             }
 
+        });
+        setWayPoint.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "set waypoint");
+                setWayPoint();
+            }
         });
 
         // the update button only can be used when the auto button is set to off
@@ -279,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if(isChecked){
-                    int y = 21 - Integer.parseInt(y_coordinate.getText().toString());
+                    int y = Integer.parseInt(y_coordinate.getText().toString());
                     String sendPos = x_coordinate.getText().toString() + ","
                             + y + ","
                             + direction.getText().toString();
@@ -299,6 +310,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if(isChecked){
+                    int y = waypoint_y;
+                    String sendWayPoint = waypoint_x + "," + y;
+                    sendMessage("WAY_POINT " + sendWayPoint);
                     sendMessage("FP_START");
                     startTimeFastest = SystemClock.uptimeMillis();
                     customerHandler.post(updateTimerThreadFastest);
@@ -320,6 +334,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
+    private void setWayPoint() {
+        waypoint_x = Integer.parseInt(x_coordinate.getText().toString());
+        waypoint_y = Integer.parseInt(y_coordinate.getText().toString());
+        Log.d(TAG, "WayPoint set: x=" + waypoint_x + " y=" + waypoint_y);
+    }
+
     public static MainActivity getInstance(){
         return instance;
     }
@@ -330,11 +350,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Log.d("MainActivity", "Init start");
         // default value for robot position
         headPos[0] = 3;
-        headPos[1] = 19;
+        headPos[1] = 2;
         robotPos[0] = 2;
-        robotPos[1] = 19;
+        robotPos[1] = 2;
         x_coordinate.setText("2", TextView.BufferType.EDITABLE);
-        y_coordinate.setText("19", TextView.BufferType.EDITABLE);
+        y_coordinate.setText("2", TextView.BufferType.EDITABLE);
         direction.setText("270");
         arena = new Arena(this);
         arena.setHeadPos(headPos);
@@ -600,7 +620,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         Log.d(TAG, "receive obstacle string ::" + readMsg);
                         Log.d(TAG, "obstacle message length ::" + readMsg.length());
                         if(readMsg.length() > 80) {
-                            String obstacle = readMsg.substring(9, 84);
+                            String obstacle = readMsg.substring(9);
                             obstacleArray = decodeMapString(obstacle);
                             decodeObstacleArray(obstacleArray);
                             updateObstacleArray(obstacleArray);
@@ -623,8 +643,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         int relative_y = (int)((raw_y - sign_y * 5) / 10);
                         Log.d(TAG, "x received: " + relative_x + " y received: " + relative_y);
                         int[] arrowPosition = calculateArrowPosition(relative_x, relative_y);
-                        int x = Integer.parseInt(x_coordinate.getText().toString()) + arrowPosition[0];
-                        int y = Integer.parseInt(y_coordinate.getText().toString()) + arrowPosition[1];
+                        int x = Integer.parseInt(x_coordinate.getText().toString()) + arrowPosition[0] - 1 ;
+                        int y = Integer.parseInt(y_coordinate.getText().toString()) + arrowPosition[1] - 1;
                         Log.d(TAG, "robot pos: " + x_coordinate.getText().toString() + " " + y_coordinate.getText().toString());
                         Log.d(TAG,"arrow coordinate: " + x + " " + y);
                         checkArrowCoordinate(x, y);
@@ -643,6 +663,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     }
                     else{
                         fConversationAA.add(mConnectedDevice + " : " + readMsg);
+                        Log.d(TAG, "other message received ::" + readMsg);
                     }
                     break;
 
@@ -669,17 +690,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void checkArrowCoordinate(int x, int y) {
         // arrow will be printed out
         // only if the same coordinate was sent for 5 times
-        if(x == arrow_x && y == arrow_y){
-            counter++;
-            if(counter == 5){
-                setArrow();
-                counter = 0;
+        if(x < 20 && y < 20) {
+            if (x == arrow_x && y == arrow_y) {
+                counter++;
+                if (counter == 5) {
+                    setArrow();
+                    counter = 0;
+                }
             }
-        }
-        // if different, update the global arrow coordinate
-        else {
-            arrow_x = x;
-            arrow_y = y;
+            // if different, update the global arrow coordinate
+            else {
+                arrow_x = x;
+                arrow_y = y;
+            }
         }
     }
 
@@ -1185,7 +1208,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         newPos += x_coordinate.getText().toString() + " ";
         newPos += y_coordinate.getText().toString() + " ";
         newPos += direction.getText().toString();
-        int y_send = 21 - Integer.parseInt(y_coordinate.getText().toString());
+        int y_send = Integer.parseInt(y_coordinate.getText().toString());
         String message = "BOT_POS" + " " + x_coordinate.getText().toString() + " " + y_send
                 + " " + direction.getText().toString();
         sendMessage(message);
@@ -1204,7 +1227,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void setRobot(String s){
         String[] temp = s.split(",");
         int x = Integer.parseInt(temp[1]);
-        int y = 21 - Integer.parseInt(temp[0]);
+        int y = Integer.parseInt(temp[0]);
         int h = Integer.parseInt(temp[2]);
         int d = (180 + 90 * h) % 360;
         decodeRobotString(x, y, d);

@@ -60,10 +60,12 @@ public class Arena extends View {
     }
     public void setArrowArray(int[][] arrowArray){ this.arrowArray = arrowArray; }
     public void setHeadPos(int[] headPos) {
-        this.headPos = headPos;
+        this.headPos[0] = headPos[0];
+        this.headPos[1] = 21 - headPos[1];
     }
     public void setRobotPos(int[] robotPos) {
-        this.robotPos = robotPos;
+        this.robotPos[0] = robotPos[0];
+        this.robotPos[1] = 21 - robotPos[1];
     }
 
     public void update(){

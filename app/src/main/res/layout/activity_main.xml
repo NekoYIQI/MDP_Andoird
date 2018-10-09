@@ -371,6 +371,19 @@
                 android:layout_alignTop="@+id/coor_x"
                 android:layout_marginLeft="20dp"/>
 
+            <Button
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_height="40dp"
+                android:layout_width="150dp"
+                android:text="Set WayPoint"
+                android:id="@+id/btn_setWayPoint"
+                android:background="@drawable/selector"
+                android:textColor="#ffffff"
+                android:onClick="setCoord"
+                android:textSize="18dp"
+                android:layout_toEndOf="@+id/btn_setXY"
+                android:layout_alignTop="@+id/coor_x"
+                android:layout_marginLeft="20dp"/>
         </RelativeLayout>
 
         <RelativeLayout
