@@ -310,8 +310,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if(isChecked){
-                    int y = waypoint_y;
-                    String sendWayPoint = waypoint_x + "," + y;
+                    String sendWayPoint = waypoint_x + "," + waypoint_y;
                     sendMessage("WAY_POINT " + sendWayPoint);
                     sendMessage("FP_START");
                     startTimeFastest = SystemClock.uptimeMillis();
