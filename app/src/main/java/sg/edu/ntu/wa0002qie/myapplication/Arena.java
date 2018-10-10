@@ -19,8 +19,8 @@ public class Arena extends View {
     private int[][] obstacles = new int[20][15];
     private int[][] spArray = new int[20][15];
     private int[][] arrowArray = new int[20][15];
-    private int[] headPos;
-    private int[] robotPos;
+    private int[] headPos = new int[2];
+    private int[] robotPos = new int[2];
 
     private Drawable upArrow;
     private Drawable leftArrow;
@@ -80,8 +80,11 @@ public class Arena extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-        int column = (int)(event.getX() / gridSize);
-        int row = (int)(event.getY() / gridSize);
+
+        int column = Math.round(event.getX() / gridSize);
+        //invert "ROW"
+
+        int row = 20 - Math.round(event.getY() / gridSize) +1;
         Log.d("Arena",  "clicked");
         Log.d("Column: ",  column+"");
         Log.d("Row: ",  row+"");

@@ -294,8 +294,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     String sendPos = x_coordinate.getText().toString() + ","
                             + y + ","
                             + direction.getText().toString();
-                    sendMessage("BOT_POS " + sendPos + "\n");
-                    sendMessage("EX_START" + "\n");
+                    //sendMessage("BOT_POS " + sendPos);
+                    sendMessage("EX_START");
                     startTimeExplore = SystemClock.uptimeMillis();
                     customerHandler.post(updateTimerThreadExplore);
                 }
@@ -310,8 +310,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if(isChecked){
-                    String sendWayPoint = waypoint_x + "," + waypoint_y;
-                    sendMessage("WAY_POINT " + sendWayPoint);
                     sendMessage("FP_START");
                     startTimeFastest = SystemClock.uptimeMillis();
                     customerHandler.post(updateTimerThreadFastest);
@@ -336,6 +334,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void setWayPoint() {
         waypoint_x = Integer.parseInt(x_coordinate.getText().toString());
         waypoint_y = Integer.parseInt(y_coordinate.getText().toString());
+        String sendWayPoint = waypoint_x + "," + waypoint_y;
+        sendMessage("WAYPOINT " + sendWayPoint);
         Log.d(TAG, "WayPoint set: x=" + waypoint_x + " y=" + waypoint_y);
     }
 
@@ -352,8 +352,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         headPos[1] = 2;
         robotPos[0] = 2;
         robotPos[1] = 2;
-        x_coordinate.setText("2", TextView.BufferType.EDITABLE);
-        y_coordinate.setText("2", TextView.BufferType.EDITABLE);
+        x_coordinate.setText(String.valueOf(robotPos[0]), TextView.BufferType.EDITABLE);
+        y_coordinate.setText(String.valueOf(robotPos[1]), TextView.BufferType.EDITABLE);
         direction.setText("270");
         arena = new Arena(this);
         arena.setHeadPos(headPos);
@@ -603,6 +603,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 case MESSAGE_READ:
                     byte[] read = (byte[]) msg.obj;
                     String readMsg = new String(read, 0, msg.arg1);
+                    //check for a certain charater  then continue
+                    if(!readMsg.contains("%"))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        readMsg.substring(readMsg.length()-2);
+                    }
+
+
+
                     if(readMsg.contains("grid")){
                         Log.d(TAG, "receive map string ::" + readMsg);
                         Log.d(TAG, "grid message length ::" + readMsg.length());
@@ -618,18 +630,37 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     else if(readMsg.contains("obstacle")){
                         Log.d(TAG, "receive obstacle string ::" + readMsg);
                         Log.d(TAG, "obstacle message length ::" + readMsg.length());
-                        if(readMsg.length() > 80) {
+                            if(readMsg.length() > 80) {
                             String obstacle = readMsg.substring(9);
                             obstacleArray = decodeObstacleArray(obstacle);
                             decodeObstacleArray(obstacleArray);
                             updateObstacleArray(obstacleArray);
                         }
                     }
+
+                    else if(readMsg.contains("MDF"))
+                    {
+                        Log.d(TAG, "receive MDF string ::" + readMsg);
+                        String[] msgarray = readMsg.split(" ");
+
+                        String map = msgarray[1];
+                        Log.d(TAG, "receive map string ::" + map);
+
+                        String obstacle = msgarray[2];
+                        Log.d(TAG, "receive obstacle string ::" + obstacle);
+
+                        gridArray = decodeMapString(map);
+                        updateGridArray(gridArray);
+
+                        obstacleArray = decodeObstacleArray(obstacle);
+                        decodeObstacleArray(obstacleArray);
+                        updateObstacleArray(obstacleArray);
+                    }
+
                     else if(readMsg.contains("BOT_POS")){
                         Log.d(TAG, "receive robot position ::" + readMsg);
                         // set the robot position
                         setRobot(readMsg.split(" ")[1]);
-
                     }
                     else if(readMsg.contains("ARROW")) {
                         Log.d(TAG, "receive arrow position ::" + readMsg);
@@ -882,13 +913,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // move forward
         if("F".equals(s)){
             switch(dStatus){
-                case 0: //if head up
+                case 180: //if head up
                     robotY = yStatus + 1;
                     break;
                 case 90: //if head to right
                     robotX = xStatus - 1;
                     break;
-                case 180: //if head down
+                case 0: //if head down
                     robotY = yStatus - 1;
                     break;
                 case 270: //if head to right
@@ -899,16 +930,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // turn left
         if("L".equals(s)){
             switch(dStatus){
-                case 0:
+                case 0: //up
                     robotD = 270;
                     break;
-                case 90:
+                case 90: //right
                     robotD = 0;
                     break;
                 case 180:
                     robotD = 90;
                     break;
-                case 270:
+                case 270: //left
                     robotD = 180;
                     break;
             }
@@ -951,7 +982,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if (d == 0){
             hx = x;
-            hy = y + 1;
+            hy = y - 1;
 
             direction.setText("0");
 
@@ -969,7 +1000,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
 
         }
-        else if (d == 90){
+        else if (d == 90)
+        {
             hx = x - 1;
             hy = y;
 
@@ -990,7 +1022,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         else if (d == 180){
             hx = x;
-            hy = y - 1;
+            hy = y + 1;
 
             direction.setText("180");
             if(dStatus == 90){
@@ -1178,8 +1210,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /*
         reset the system
      */
-    public void reset(View v){
-//        sendMessage("reset");
+    public void reset(View v)
+    {
         for(int i = 0; i < 20; i ++){
             for(int j = 0; j < 15; j++) {
                 obstacleArray[i][j] = 0;
@@ -1191,7 +1223,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         arena.setSpArray(spArray);
 
         xStatus = 2;
-        yStatus = 19;
+        yStatus = 2;
         dStatus = 270;
 
         tConversationAA.clear();
@@ -1225,8 +1257,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         newPos += y_coordinate.getText().toString() + " ";
         newPos += direction.getText().toString();
         int y_send = Integer.parseInt(y_coordinate.getText().toString());
-        String message = "BOT_POS" + " " + x_coordinate.getText().toString() + " " + y_send
-                + " " + direction.getText().toString();
+        String message = "BOT_POS" + " " + x_coordinate.getText().toString() + "," + y_send
+                + "," + direction.getText().toString();
         sendMessage(message);
 
         try {
