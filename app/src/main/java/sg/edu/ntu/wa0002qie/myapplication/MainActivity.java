@@ -334,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         waypoint_y = Integer.parseInt(y_coordinate.getText().toString());
         String sendWayPoint = waypoint_x + "," + waypoint_y;
         sendMessage("WAYPOINT " + sendWayPoint);
+        arena.setWayPoint(waypoint_x, waypoint_y);
         Log.d(TAG, "WayPoint set: x=" + waypoint_x + " y=" + waypoint_y);
     }
 

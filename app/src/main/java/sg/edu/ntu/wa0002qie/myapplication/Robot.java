@@ -26,6 +26,9 @@ public class Robot {
     private final static int ROW = 20;
     private final static int COLUMN = 15;
 
+    private int waypoint_x = -1;
+    private int waypoint_y = -1;
+
 
     public void setUpArrow(Drawable upArrow) {
         this.upArrow = upArrow;
@@ -36,10 +39,12 @@ public class Robot {
     public void setRightArrow(Drawable rightArrow) {
         this.rightArrow = rightArrow;
     }
+    public void setWayPoint(Drawable waypoint) {this.waypoint = waypoint;}
 
     private Drawable upArrow;
     private Drawable leftArrow;
     private Drawable rightArrow;
+    private Drawable waypoint;
 
     public Robot(){
         super();
@@ -108,6 +113,10 @@ public class Robot {
                     drawImage(j + 1, i + 1, gridSize, upArrow, canvas);
                 }
             }
+        }
+        // WayPoint
+        if(waypoint_x != -1 && waypoint_y != -1){
+            drawImage(waypoint_x, 21 - waypoint_y, gridSize, waypoint, canvas);
         }
 
         // START
@@ -211,6 +220,10 @@ public class Robot {
     }
     public void setRobotPos(int[] robotPos) {
         this.robotPos = robotPos;
+    }
+    public void setWayPoint(int x, int y){
+        waypoint_x = x;
+        waypoint_y = y;
     }
 }
 

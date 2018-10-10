@@ -271,7 +271,7 @@
 
         <ListView
             android:layout_width="285dp"
-            android:layout_height="60dp"
+            android:layout_height="80dp"
             android:stackFromBottom="true"
             android:transcriptMode="normal"
             android:id="@+id/listView_from"
@@ -374,7 +374,7 @@
             <Button
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_height="40dp"
-                android:layout_width="150dp"
+                android:layout_width="50dp"
                 android:text="Set WayPoint"
                 android:id="@+id/btn_setWayPoint"
                 android:background="@drawable/selector"

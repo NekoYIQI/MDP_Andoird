@@ -25,6 +25,7 @@ public class Arena extends View {
     private Drawable upArrow;
     private Drawable leftArrow;
     private Drawable rightArrow;
+    private Drawable waypoint;
 
     public Arena(Context context){
         super(context);
@@ -34,9 +35,11 @@ public class Arena extends View {
         upArrow = context.getResources().getDrawable(R.drawable.up);
         leftArrow = context.getResources().getDrawable(R.drawable.left);
         rightArrow = context.getResources().getDrawable(R.drawable.right);
+        waypoint = context.getResources().getDrawable(R.drawable.candy);
         robot.setUpArrow(upArrow);
         robot.setLeftArrow(leftArrow);
         robot.setRightArrow(rightArrow);
+        robot.setWayPoint(waypoint);
     }
 
     @Override
@@ -66,6 +69,9 @@ public class Arena extends View {
     public void setRobotPos(int[] robotPos) {
         this.robotPos[0] = robotPos[0];
         this.robotPos[1] = 21 - robotPos[1];
+    }
+    public void setWayPoint(int x, int y){
+        this.robot.setWayPoint(x, y);
     }
 
     public void update(){
