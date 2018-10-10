@@ -37,6 +37,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import org.json.JSONException;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final int REQUEST_CONNECT_DEVICE = 2;
     private static final int REQUEST_ENABLE_BLUETOOTH = 3;
 
-    private String mConnectedDevice= "";
+    private String mConnectedDevice = "";
     private BluetoothAdapter bluetoothAdapter = null;
     private Bluetooth chatService = null;
     private Sensor accelerometer;
@@ -159,30 +160,30 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         // assign UI elements
-        robotStatus = (TextView)findViewById(R.id.text_robotStatus);
+        robotStatus = (TextView) findViewById(R.id.text_robotStatus);
 
-        exploreTime = (TextView)findViewById(R.id.timer_explore);
-        fastestTime = (TextView)findViewById(R.id.timer_fastest);
+        exploreTime = (TextView) findViewById(R.id.timer_explore);
+        fastestTime = (TextView) findViewById(R.id.timer_fastest);
 
-        x_coordinate = (EditText)findViewById(R.id.coor_x);
-        y_coordinate = (EditText)findViewById(R.id.coor_y);
-        direction = (EditText)findViewById(R.id.dir);
+        x_coordinate = (EditText) findViewById(R.id.coor_x);
+        y_coordinate = (EditText) findViewById(R.id.coor_y);
+        direction = (EditText) findViewById(R.id.dir);
 
-        TextAMD = (EditText)findViewById(R.id.send_text);
-        autoManaul = (ToggleButton)findViewById(R.id.btn_automanual);
-        update = (Button)findViewById(R.id.btn_update);
-        explore = (ToggleButton)findViewById(R.id.btn_explore);
-        fastest = (ToggleButton)findViewById(R.id.btn_fastest);
-        tiltSensing = (ToggleButton)findViewById(R.id.tilt_btn);
+        TextAMD = (EditText) findViewById(R.id.send_text);
+        autoManaul = (ToggleButton) findViewById(R.id.btn_automanual);
+        update = (Button) findViewById(R.id.btn_update);
+        explore = (ToggleButton) findViewById(R.id.btn_explore);
+        fastest = (ToggleButton) findViewById(R.id.btn_fastest);
+        tiltSensing = (ToggleButton) findViewById(R.id.tilt_btn);
 
-        f1 = (Button)findViewById(R.id.btn_f1);
-        f2 = (Button)findViewById(R.id.btn_f2);
+        f1 = (Button) findViewById(R.id.btn_f1);
+        f2 = (Button) findViewById(R.id.btn_f2);
 
-        up = (ImageButton)findViewById(R.id.btn_up);
-        left = (ImageButton)findViewById(R.id.btn_left);
-        right = (ImageButton)findViewById(R.id.btn_right);
-        setXY = (Button)findViewById(R.id.btn_setXY);
-        setWayPoint = (Button)findViewById(R.id.btn_setWayPoint);
+        up = (ImageButton) findViewById(R.id.btn_up);
+        left = (ImageButton) findViewById(R.id.btn_left);
+        right = (ImageButton) findViewById(R.id.btn_right);
+        setXY = (Button) findViewById(R.id.btn_setXY);
+        setWayPoint = (Button) findViewById(R.id.btn_setWayPoint);
 
         // initializing the environment
         init();
@@ -224,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 turnRight();
             }
         });
-        setXY.setOnClickListener(new View.OnClickListener(){
+        setXY.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "set X and Y");
@@ -233,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
 
         });
-        setWayPoint.setOnClickListener(new View.OnClickListener(){
+        setWayPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "set waypoint");
@@ -245,8 +246,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         update.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                try{
-                    if(obstacleArray != null){
+                try {
+                    if (obstacleArray != null) {
                         autoUpdate = true;
                         arena.setObstacles(obstacleArray);
                     }
@@ -255,13 +256,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     autoUpdate = false;
                     Toast.makeText(MainActivity.this, "Map Updated", Toast.LENGTH_SHORT).show();
 
-                } catch(Exception e){
+                } catch (Exception e) {
                     Toast.makeText(MainActivity.this, "Already Updated", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        if(autoUpdate){
+        if (autoUpdate) {
 //            update.setBackgroundResource(R.drawable.enabled_btn);
 //            Toast.makeText(MainActivity.this, "Auto Update : ON", Toast.LENGTH_SHORT).show();
             autoManaul.setChecked(true);
@@ -271,13 +272,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         autoManaul.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if(isChecked){   // AUTO motion
+                if (isChecked) {   // AUTO motion
                     update.setEnabled(false);
                     update.setBackgroundColor(Color.parseColor("#efa1bfc7"));
                     autoUpdate = true;
                     Toast.makeText(MainActivity.this, "Auto Update : ON", Toast.LENGTH_SHORT).show();
-                }
-                else{           // Manual motion
+                } else {           // Manual motion
                     autoUpdate = false;
                     update.setEnabled(true);
                     update.setBackgroundResource(R.drawable.enabled_button);
@@ -289,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         explore.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     int y = Integer.parseInt(y_coordinate.getText().toString());
                     String sendPos = x_coordinate.getText().toString() + ","
                             + y + ","
@@ -298,8 +298,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     sendMessage("EX_START");
                     startTimeExplore = SystemClock.uptimeMillis();
                     customerHandler.post(updateTimerThreadExplore);
-                }
-                else{
+                } else {
                     timeBuffExplore += timeInMillisecondsExplore;
                     customerHandler.removeCallbacks(updateTimerThreadExplore);
                 }
@@ -309,12 +308,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         fastest.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     sendMessage("FP_START");
                     startTimeFastest = SystemClock.uptimeMillis();
                     customerHandler.post(updateTimerThreadFastest);
-                }
-                else{
+                } else {
                     timeBuffFastest += timeInMillisecondsFastest;
                     customerHandler.removeCallbacks(updateTimerThreadFastest);
                 }
@@ -339,12 +337,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Log.d(TAG, "WayPoint set: x=" + waypoint_x + " y=" + waypoint_y);
     }
 
-    public static MainActivity getInstance(){
+    public static MainActivity getInstance() {
         return instance;
     }
 
     // init the whole android environment
-    private void init(){
+    private void init() {
         // default value for map string
         Log.d("MainActivity", "Init start");
         // default value for robot position
@@ -359,8 +357,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         arena.setHeadPos(headPos);
         arena.setRobotPos(robotPos);
         arena.setClickable(true);
-        for(int x = 0; x < 20; x++){
-            for(int y = 0; y < 15; y++){
+        for (int x = 0; x < 20; x++) {
+            for (int y = 0; y < 15; y++) {
                 obstacleArray[x][y] = 0;
                 spArray[x][y] = 0;
                 arrowArray[x][y] = 0;
@@ -377,23 +375,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         Log.e(TAG, "++ ON START ++");
-        if(!bluetoothAdapter.isEnabled()) {
+        if (!bluetoothAdapter.isEnabled()) {
             Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(turnOn, REQUEST_ENABLE_BLUETOOTH);
             Toast.makeText(getApplicationContext(), "Disabled bluetooth", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            if(chatService == null){
+        } else {
+            if (chatService == null) {
                 setupChat();
             }
-            Toast.makeText(getApplicationContext(),"Enabled bluetooth", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Enabled bluetooth", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void setupChat(){
+    private void setupChat() {
         Log.d(TAG, "setupChat()");
         // initialize the array for the conversation thread
         tConversationAA = new ArrayAdapter<String>(this, R.layout.text);
@@ -411,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     @Override
-    public synchronized void onResume(){
+    public synchronized void onResume() {
         Log.d(TAG, "++ ON RESUME ++");
         super.onResume();
         // Resume the BT when it first fail onStart()
@@ -426,7 +423,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         Log.d(TAG, "++ ON PAUSE ++");
         super.onPause();
         // sensor on pause
@@ -434,23 +431,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     @Override
-    public void onStop(){
+    public void onStop() {
         Log.d(TAG, "++ ON STOP ++");
         super.onStop();
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         Log.d(TAG, "++ ON DESTROY ++");
         super.onDestroy();
-        if(chatService != null){
+        if (chatService != null) {
             chatService.stop();
         }
     }
 
-    private void ensureDiscoverable(){
+    private void ensureDiscoverable() {
         Log.d(TAG, "ensure discoverable");
-        if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+        if (bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent requireDiscoverable = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             requireDiscoverable.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
             startActivity(requireDiscoverable);
@@ -460,12 +457,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void sendMessage(String string) {
         Log.d(TAG, "send message " + string);
         // Check that we're actually connected before trying anything
-        if(chatService.getState() != Bluetooth.STATE_CONNECTED){
+        if (chatService.getState() != Bluetooth.STATE_CONNECTED) {
             Toast.makeText(this, "Bluetooth Not Connected", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if(string.length() > 0){
+        if (string.length() > 0) {
             byte[] msgSend = string.getBytes();
             chatService.write(msgSend);
             // reset buffer to zero
@@ -473,9 +470,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    private TextView.OnEditorActionListener writeListener = new TextView.OnEditorActionListener(){
-        public boolean onEditorAction(TextView view, int actionId, KeyEvent event){
-            if(actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP){
+    private TextView.OnEditorActionListener writeListener = new TextView.OnEditorActionListener() {
+        public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+            if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
                 String msg = view.getText().toString();
                 sendMessage(msg);
             }
@@ -489,15 +486,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             timeInMillisecondsExplore = SystemClock.uptimeMillis() - startTimeExplore;
             updateTimeExplore = timeBuffExplore + timeInMillisecondsExplore;
 
-            int sec = (int) (updateTimeExplore/1000);
-            int min = sec/60;
+            int sec = (int) (updateTimeExplore / 1000);
+            int min = sec / 60;
             sec %= 60;
             int millisecond = (int) (updateTimeExplore % 1000);
             int milli = millisecond / 10;
-            if(min < 10){
+            if (min < 10) {
                 exploreTime.setText("0" + min + ":" + sec + ":" + milli);
-            }
-            else{
+            } else {
                 exploreTime.setText(min + ":" + sec + ":" + milli);
             }
             customerHandler.post(this);
@@ -510,15 +506,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             timeInMillisecondsFastest = SystemClock.uptimeMillis() - startTimeFastest;
             updateTimeFastest = timeBuffFastest + timeInMillisecondsFastest;
 
-            int sec = (int) (updateTimeFastest/1000);
-            int min = sec/60;
+            int sec = (int) (updateTimeFastest / 1000);
+            int min = sec / 60;
             sec %= 60;
             int millisecond = (int) (updateTimeFastest % 1000);
             int milli = millisecond / 10;
-            if(min < 10){
+            if (min < 10) {
                 fastestTime.setText("0" + min + ":" + sec + ":" + milli);
-            }
-            else{
+            } else {
                 fastestTime.setText(min + ":" + sec + ":" + milli);
             }
             customerHandler.post(this);
@@ -532,39 +527,42 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     };
 
-    public void goStraight(){
+    public void goStraight() {
         String forwardMsg = "F";
         sendMessage(forwardMsg);
         try {
             decodeRobotString_algo(forwardMsg);
             updateRobotPosition();
-        } catch (JSONException e){}
+        } catch (JSONException e) {
+        }
         // 1 sec later, set robot status back to stopped
         mMyHandler.postDelayed(mRunnable, 1000);
     }
 
-    public void turnLeft(){
+    public void turnLeft() {
         String leftMsg = "L";
         sendMessage(leftMsg);
         try {
             decodeRobotString_algo(leftMsg);
             updateRobotPosition();
-        } catch (JSONException e){}
+        } catch (JSONException e) {
+        }
         mMyHandler.postDelayed(mRunnable, 1000);
     }
 
-    public void turnRight(){
+    public void turnRight() {
         Log.d(TAG, "Robot turn right");
         String rightMsg = "R";
         sendMessage(rightMsg);
         try {
             decodeRobotString_algo(rightMsg);
             updateRobotPosition();
-        } catch (JSONException e){}
+        } catch (JSONException e) {
+        }
         mMyHandler.postDelayed(mRunnable, 1000);
     }
 
-    public void start(View v){
+    public void start(View v) {
     }
 
     private final void setStatus(CharSequence subTitle) {
@@ -579,10 +577,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /*
         create handler to get info back from the Bluethooth Chat Service
      */
-    private final Handler mHandler = new Handler(){
+    private final Handler mHandler = new Handler() {
         @Override
-        public void handleMessage(Message msg){
-            switch(msg.what){
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
                 case MESSAGE_STATE_CHANGE:
                     Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
                     switch (msg.arg1) {
@@ -604,42 +602,35 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     byte[] read = (byte[]) msg.obj;
                     String readMsg = new String(read, 0, msg.arg1);
                     //check for a certain charater  then continue
-                    if(!readMsg.contains("%"))
-                    {
+                    if (!readMsg.contains("%")) {
+                        Log.d(TAG, "message receive: "+readMsg);
                         break;
-                    }
-                    else
-                    {
-                        readMsg.substring(readMsg.length()-2);
+                    } else {
+                        readMsg = readMsg.substring(0, readMsg.length() - 1);
                     }
 
 
-
-                    if(readMsg.contains("grid")){
+                    if (readMsg.contains("grid")) {
                         Log.d(TAG, "receive map string ::" + readMsg);
                         Log.d(TAG, "grid message length ::" + readMsg.length());
                         // the readMessage is in a hex format
                         fConversationAA.add(mConnectedDevice + " : " + readMsg);
-                        if(readMsg.length() > 75) {
+                        if (readMsg.length() > 75) {
                             String map = readMsg.substring(5, 80);
                             Log.d(TAG, "Map string::" + map);
                             gridArray = decodeMapString(map);
                             updateGridArray(gridArray);
                         }
-                    }
-                    else if(readMsg.contains("obstacle")){
+                    } else if (readMsg.contains("obstacle")) {
                         Log.d(TAG, "receive obstacle string ::" + readMsg);
                         Log.d(TAG, "obstacle message length ::" + readMsg.length());
-                            if(readMsg.length() > 80) {
+                        if (readMsg.length() > 80) {
                             String obstacle = readMsg.substring(9);
                             obstacleArray = decodeObstacleArray(obstacle);
                             decodeObstacleArray(obstacleArray);
                             updateObstacleArray(obstacleArray);
                         }
-                    }
-
-                    else if(readMsg.contains("MDF"))
-                    {
+                    } else if (readMsg.contains("MDF")) {
                         Log.d(TAG, "receive MDF string ::" + readMsg);
                         String[] msgarray = readMsg.split(" ");
 
@@ -649,49 +640,50 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         String obstacle = msgarray[2];
                         Log.d(TAG, "receive obstacle string ::" + obstacle);
 
+                        String position = msgarray[3];
+
                         gridArray = decodeMapString(map);
                         updateGridArray(gridArray);
 
                         obstacleArray = decodeObstacleArray(obstacle);
                         decodeObstacleArray(obstacleArray);
                         updateObstacleArray(obstacleArray);
-                    }
 
-                    else if(readMsg.contains("BOT_POS")){
+                        setRobot(position);
+                        updateRobotPosition();
+                    } else if (readMsg.contains("BOT_POS")) {
                         Log.d(TAG, "receive robot position ::" + readMsg);
                         // set the robot position
                         setRobot(readMsg.split(" ")[1]);
-                    }
-                    else if(readMsg.contains("ARROW")) {
+                        updateRobotPosition();
+                    } else if (readMsg.contains("ARROW")) {
                         Log.d(TAG, "receive arrow position ::" + readMsg);
                         String a = readMsg.split(" ")[1];
                         double raw_x = Double.parseDouble(a.split(",")[0]);
                         double raw_y = Double.parseDouble(a.split(",")[1]) + 1;
                         double sign_x = Math.signum(raw_x);
                         double sign_y = Math.signum(raw_y);
-                        int relative_x = (int)((raw_x - sign_x * 5) / 10);
-                        int relative_y = (int)((raw_y - sign_y * 5) / 10);
+                        int relative_x = (int) ((raw_x - sign_x * 5) / 10);
+                        int relative_y = (int) ((raw_y - sign_y * 5) / 10);
                         Log.d(TAG, "x received: " + relative_x + " y received: " + relative_y);
                         int[] arrowPosition = calculateArrowPosition(relative_x, relative_y);
-                        int x = Integer.parseInt(x_coordinate.getText().toString()) + arrowPosition[0] - 1 ;
+                        int x = Integer.parseInt(x_coordinate.getText().toString()) + arrowPosition[0] - 1;
                         int y = Integer.parseInt(y_coordinate.getText().toString()) + arrowPosition[1] - 1;
                         Log.d(TAG, "robot pos: " + x_coordinate.getText().toString() + " " + y_coordinate.getText().toString());
-                        Log.d(TAG,"arrow coordinate: " + x + " " + y);
+                        Log.d(TAG, "arrow coordinate: " + x + " " + y);
                         checkArrowCoordinate(x, y);
-                    }
-                    else if(readMsg.contains("sp")){
-                        try{
+                    } else if (readMsg.contains("sp")) {
+                        try {
                             Log.d(TAG, "receive fastest path ::" + readMsg);
                             fConversationAA.add(mConnectedDevice + " : " + readMsg);
-                            String[] fastestSteps = readMsg.replace("sp","").split(",");
+                            String[] fastestSteps = readMsg.replace("sp", "").split(",");
                             //spSteps = Arrays.asList(fastestSteps);
                             drawShortestPath(fastestSteps);
 
-                        } catch(Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }
-                    else{
+                    } else {
                         fConversationAA.add(mConnectedDevice + " : " + readMsg);
                         Log.d(TAG, "other message received ::" + readMsg);
                     }
@@ -722,11 +714,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String[] binaryObstacle = hexToBinary(obstacleArray);
         int[][] result = new int[20][15];
         int index = 1;
-        for(int i = 19; i >= 0; i --){
-            for(int j = 0; j < 15; j ++){
-                if(gridArray[i][j] == 1){
-                    result[i][j] = Integer.parseInt(binaryObstacle[index]);
-                    index++;
+        for (int i = 19; i >= 0; i--) {
+            for (int j = 0; j < 15; j++) {
+                if (index < binaryObstacle.length) {
+                    if (gridArray[i][j] == 1) {
+                        result[i][j] = Integer.parseInt(binaryObstacle[index]);
+                        index++;
+                    }
                 }
             }
         }
@@ -737,7 +731,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void checkArrowCoordinate(int x, int y) {
         // arrow will be printed out
         // only if the same coordinate was sent for 5 times
-        if(x < 20 && y < 20) {
+        if (x < 20 && y < 20) {
             if (x == arrow_x && y == arrow_y) {
                 counter++;
                 if (counter == 5) {
@@ -760,7 +754,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private int[] calculateArrowPosition(int x, int y) {
         int[] result = new int[2];
-        switch (dStatus){
+        switch (dStatus) {
             case 0:
                 result[0] = -x;
                 result[1] = y;
@@ -784,59 +778,59 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /*
         for each step, check its direction. if it's forward command, calculate the number followed by "F"
      */
-    public void move(String s){
+    public void move(String s) {
         String numMove = s;
-        Log.d("numMove: ",numMove);
+        Log.d("numMove: ", numMove);
 
         dir = numMove.substring(0, 1);
         numMove = numMove.replace(dir, "");
         numMove = numMove.replace(",B,", "");
-        if(numMove == ""){
+        if (numMove == "") {
             run = 0;
             return;
         }
         run = Integer.parseInt(numMove);
 
-        Log.d("run:",numMove);
+        Log.d("run:", numMove);
     }
 
     /*
         draw out the shortest path
     */
-    public void drawShortestPath(String[] steps){
+    public void drawShortestPath(String[] steps) {
         int d = 180;
         int movement = 0;
         // set a pointer pointing to the drawing square
         int xptr = 1;
         int yptr = 18;
-        for(String step : steps){
+        for (String step : steps) {
             // set the moving steps
-            if (step.contains("b")){
+            if (step.contains("b")) {
                 continue;
             }
-            if (step.contains("F")){
+            if (step.contains("F")) {
                 movement = Integer.parseInt(step.replace("F", ""));
                 // update the array based on the direction
-                if(d == 0){
-                    for(int i = 0; i < movement; i++) {
+                if (d == 0) {
+                    for (int i = 0; i < movement; i++) {
                         yptr++;
                         spArray[yptr][xptr] = 1;
                     }
                 }
-                if(d == 90){
-                    for(int i = 0; i < movement; i++) {
+                if (d == 90) {
+                    for (int i = 0; i < movement; i++) {
                         xptr--;
                         spArray[yptr][xptr] = 1;
                     }
                 }
-                if(d == 180){
-                    for(int i = 0; i < movement; i++) {
+                if (d == 180) {
+                    for (int i = 0; i < movement; i++) {
                         yptr--;
                         spArray[yptr][xptr] = 1;
                     }
                 }
-                if(d == 270){
-                    for(int i = 0; i < movement; i++) {
+                if (d == 270) {
+                    for (int i = 0; i < movement; i++) {
                         xptr++;
                         spArray[yptr][xptr] = 1;
                     }
@@ -844,25 +838,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 continue;
             }
             // check and set direction
-            if(d == 0){
+            if (d == 0) {
                 if (step.contains("R"))
                     d = 90;
                 else if (step.contains("L"))
                     d = 270;
-            }
-            else if(d == 90){
+            } else if (d == 90) {
                 if (step.contains("R"))
                     d = 180;
                 else if (step.contains("L"))
                     d = 0;
-            }
-            else if(d == 180){
+            } else if (d == 180) {
                 if (step.contains("R"))
                     d = 270;
                 else if (step.contains("L"))
                     d = 90;
-            }
-            else if(d == 270){
+            } else if (d == 270) {
                 if (step.contains("R"))
                     d = 0;
                 else if (step.contains("L"))
@@ -875,28 +866,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     // not necessary for now
-    public void runShortestPath() throws JSONException{
+    public void runShortestPath() throws JSONException {
         Log.d(TAG, "runShortestPath()");
-        for(String step: spSteps){
+        for (String step : spSteps) {
             move(step);
-            if(dir.equals("F")){
-                Log.d("run:",String.valueOf(run));
-                for(int i = 0; i < run; i++){
+            if (dir.equals("F")) {
+                Log.d("run:", String.valueOf(run));
+                for (int i = 0; i < run; i++) {
                     decodeRobotString_algo(dir);
                     updateRobotPosition();
                 }
-            }
-            else if(dir.equals("L")){
+            } else if (dir.equals("L")) {
                 decodeRobotString_algo(dir);
                 updateRobotPosition();
-            }
-            else if(dir.equals("R")){
+            } else if (dir.equals("R")) {
                 decodeRobotString_algo(dir);
                 updateRobotPosition();
             }
             try {
                 Thread.sleep(300);
-            } catch(InterruptedException ex) {
+            } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
         }
@@ -905,14 +894,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /*
         update the robot status according to the instruction string
      */
-    public void decodeRobotString_algo(String s)throws JSONException{
+    public void decodeRobotString_algo(String s) throws JSONException {
         int robotX = xStatus;
         int robotY = yStatus;
         int robotD = dStatus;
 
         // move forward
-        if("F".equals(s)){
-            switch(dStatus){
+        if ("F".equals(s)) {
+            switch (dStatus) {
                 case 180: //if head up
                     robotY = yStatus + 1;
                     break;
@@ -928,8 +917,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
         // turn left
-        if("L".equals(s)){
-            switch(dStatus){
+        if ("L".equals(s)) {
+            switch (dStatus) {
                 case 0: //up
                     robotD = 270;
                     break;
@@ -945,8 +934,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
         // turn right
-        if("R".equals(s)){
-            switch(dStatus){
+        if ("R".equals(s)) {
+            switch (dStatus) {
                 case 0:
                     robotD = 90;
                     break;
@@ -962,7 +951,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
         // return null if the robot is moving out of bound
-        if(robotX < 2 || robotX > 14 || robotY < 2 || robotY > 19){
+        if (robotX < 2 || robotX > 14 || robotY < 2 || robotY > 19) {
             return;
         }
         decodeRobotString(robotX, robotY, robotD);
@@ -971,88 +960,84 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /*
         used to set the robot status and update the grid string
      */
-    public void decodeRobotString(int x, int y, int d){
+    public void decodeRobotString(int x, int y, int d) {
         int hx = -1;
         int hy = -1;
         int bx = x;
         int by = y;
 
-        x_coordinate.setText(x+"");
-        y_coordinate.setText(y+"");
+        x_coordinate.setText(x + "");
+        y_coordinate.setText(y + "");
 
-        if (d == 0){
+        if (d == 0) {
             hx = x;
             hy = y - 1;
 
             direction.setText("0");
 
-            if(dStatus == 270){
+            if (dStatus == 270) {
                 robotStatus.setText("Turn Right");
             }
-            if(dStatus == 90){
+            if (dStatus == 90) {
                 robotStatus.setText("Turn Left");
             }
-            if(y < yStatus){
+            if (y < yStatus) {
                 robotStatus.setText("Moving Foward");
             }
-            if(y > yStatus){
+            if (y > yStatus) {
                 robotStatus.setText("Moving Backward");
             }
 
-        }
-        else if (d == 90)
-        {
+        } else if (d == 90) {
             hx = x - 1;
             hy = y;
 
             direction.setText("90");
-            if(dStatus == 0){
+            if (dStatus == 0) {
                 robotStatus.setText("Turn Right");
             }
-            if(dStatus == 180){
+            if (dStatus == 180) {
                 robotStatus.setText("Turn Left");
             }
-            if(x > xStatus){
+            if (x > xStatus) {
                 robotStatus.setText("Moving Foward");
             }
-            if(x > xStatus){
+            if (x > xStatus) {
                 robotStatus.setText("Moving Backward");
             }
 
-        }
-        else if (d == 180){
+        } else if (d == 180) {
             hx = x;
             hy = y + 1;
 
             direction.setText("180");
-            if(dStatus == 90){
+            if (dStatus == 90) {
                 robotStatus.setText("Turn Right");
             }
-            if(dStatus == 270){
+            if (dStatus == 270) {
                 robotStatus.setText("Turn Left");
             }
-            if(y > yStatus){
+            if (y > yStatus) {
                 robotStatus.setText("Moving Foward");
             }
-            if(y < yStatus){
+            if (y < yStatus) {
                 robotStatus.setText("Moving Backward");
             }
 
-        }
-        else if (d == 270){
+        } else if (d == 270) {
             hx = x + 1;
             hy = y;
             direction.setText("270");
-            if(dStatus == 180){
+            if (dStatus == 180) {
                 robotStatus.setText("Turn Right");
             }
-            if(dStatus == 0){
+            if (dStatus == 0) {
                 robotStatus.setText("Turn Left");
             }
-            if(x < xStatus){
+            if (x < xStatus) {
                 robotStatus.setText("Moving Foward");
             }
-            if(x > xStatus){
+            if (x > xStatus) {
                 robotStatus.setText("Moving Backward");
             }
 
@@ -1074,25 +1059,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /*
         decode the grid string: add up the unexplored-explored with the empty-obstacle and invert it to get the result
      */
-    private int[][] decodeMapString(String mapString){
+    private int[][] decodeMapString(String mapString) {
         Log.d(TAG, "decode map string: " + mapString);
         String[] mapArray = mapString.split("");
         String[] binaryMap = hexToBinary(mapArray);
         // index representing the index of digit in the binary array
-        int index = 1;
+        int index = 3;
         int[][] result = new int[20][15];
-        for(int i = 19; i >= 0; i--){
-            for(int j = 0; j < 15; j++){
+        for (int i = 19; i >= 0; i--) {
+            for (int j = 0; j < 15; j++) {
                 result[i][j] = Integer.parseInt(binaryMap[index]);
-                index ++;
+                index++;
             }
         }
         return result;
     }
 
-    private String[] hexToBinary(String[] hexMap){
+    private String[] hexToBinary(String[] hexMap) {
         String binaryString = "";
-        for(int i = 1; i < hexMap.length; i++){
+        for (int i = 1; i < hexMap.length; i++) {
 //            Log.d(TAG, "hexMap[i]:" + hexMap[i]);
             String value = new BigInteger(hexMap[i], 16).toString(2);
             value = String.format("%4s", value).replace(" ", "0");
@@ -1106,22 +1091,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         update the obstacle array(tgt with the explored path) based on the passed in array
      */
 
-    private void decodeObstacleArray(int[][] obstacleArray){
-        for(int i = 0 ; i < 20 ; i++){
-            for(int j = 0; j < 15; j++){
+    private void decodeObstacleArray(int[][] obstacleArray) {
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 15; j++) {
                 obstacleArray[i][j] += 1;
             }
         }
     }
 
-    public void updateObstacleArray(int[][] list){
+    public void updateObstacleArray(int[][] list) {
         Log.d(TAG, "updateObstacleArray()");
-        if(autoUpdate == true){
+        if (autoUpdate == true) {
             arena.setObstacles(list);
         }
     }
 
-    public void updateRobotPosition(){
+    public void updateRobotPosition() {
         arena.setHeadPos(headPos);
         arena.setRobotPos(robotPos);
     }
@@ -1129,31 +1114,31 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /*
         update robot position
      */
-    public void updateGridArray(int[][] array){
-        if(autoUpdate == true){
-            Log.d("updateGridArray","true");
+    public void updateGridArray(int[][] array) {
+        if (autoUpdate == true) {
+            Log.d("updateGridArray", "true");
             arena.setGridArray(array);
         }
     }
+
     /*
         check for connection result
      */
-    public void onActivityResult(int request, int result, Intent data){
+    public void onActivityResult(int request, int result, Intent data) {
         if (true)
             Log.d(TAG, "onActivityResult " + result);
-        switch (request){
+        switch (request) {
             case REQUEST_CONNECT_DEVICE:
                 System.out.println("onActivityResult");
-                if (result == Activity.RESULT_OK){
+                if (result == Activity.RESULT_OK) {
                     System.out.println("result ok");
                     connectDevice(data);
                 }
                 break;
             case REQUEST_ENABLE_BLUETOOTH:
-                if(result == Activity.RESULT_OK){
+                if (result == Activity.RESULT_OK) {
                     setupChat();
-                }
-                else{
+                } else {
                     Toast.makeText(this, "Bluetooth Disabled", Toast.LENGTH_SHORT).show();
                     finish();
                 }
@@ -1163,7 +1148,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /*
         connect to the device that is passed in
      */
-    public void connectDevice(Intent data){
+    public void connectDevice(Intent data) {
         // get the connected device's MAC address
         String addr = data.getExtras().getString(BluetoothDevicesActivity.EXTRA_DEVICE_ADDRESS);
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(addr);
@@ -1172,22 +1157,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         new MenuInflater(getApplication()).inflate(R.menu.top_bar_menu, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = null;
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.connect_devices:
                 if (!bluetoothAdapter.isEnabled()) {
                     Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(turnOn, 0);
                     Toast.makeText(getApplicationContext(), "Bluetooth Enable", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     intent = new Intent(this, BluetoothDevicesActivity.class);
                     startActivityForResult(intent, REQUEST_CONNECT_DEVICE);
                 }
@@ -1210,10 +1194,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /*
         reset the system
      */
-    public void reset(View v)
-    {
-        for(int i = 0; i < 20; i ++){
-            for(int j = 0; j < 15; j++) {
+    public void reset(View v) {
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 15; j++) {
                 obstacleArray[i][j] = 0;
                 spArray[i][j] = 0;
             }
@@ -1243,15 +1226,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     // set the text view when click on map
-    public void setCoordinate(int x, int y){
-        x_coordinate.setText(x+"", TextView.BufferType.EDITABLE);
-        y_coordinate.setText(y+"", TextView.BufferType.EDITABLE);
+    public void setCoordinate(int x, int y) {
+        x_coordinate.setText(x + "", TextView.BufferType.EDITABLE);
+        y_coordinate.setText(y + "", TextView.BufferType.EDITABLE);
         xStatus = x;
         yStatus = y;
     }
 
     // set the postion of the robot on the map
-    public void setRobot(){
+    public void setRobot() {
         String newPos = "";
         newPos += x_coordinate.getText().toString() + " ";
         newPos += y_coordinate.getText().toString() + " ";
@@ -1264,7 +1247,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         try {
             decodeRobotString_algo(newPos);
             updateRobotPosition();
-        } catch (JSONException e){}
+        } catch (JSONException e) {
+        }
         mMyHandler.postDelayed(mRunnable, 1000);
 
         Toast.makeText(getApplicationContext(), "Robot Set", Toast.LENGTH_SHORT).show();
@@ -1272,7 +1256,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
-    public void setRobot(String s){
+    public void setRobot(String s) {
         String[] temp = s.split(",");
         int x = Integer.parseInt(temp[1]);
         int y = Integer.parseInt(temp[0]);
@@ -1282,16 +1266,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Toast.makeText(getApplicationContext(), "Robot Set", Toast.LENGTH_SHORT).show();
     }
 
-    public void setCoord(View view){
+    public void setCoord(View view) {
         setRobot();
     }
 
 
     @Override
-    public void onSensorChanged(SensorEvent event){
+    public void onSensorChanged(SensorEvent event) {
         float x = event.values[0];
         float y = event.values[1];
-        if(tilt == false){
+        if (tilt == false) {
             onPause();
         }
 //        if (Math.abs(x) > Math.abs(y)) {
@@ -1321,7 +1305,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy){
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
 
