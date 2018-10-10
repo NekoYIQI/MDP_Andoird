@@ -607,6 +607,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         break;
                     } else {
                         readMsg = readMsg.substring(0, readMsg.length() - 1);
+                        fConversationAA.add(mConnectedDevice + " : " + readMsg);
                     }
 
 
