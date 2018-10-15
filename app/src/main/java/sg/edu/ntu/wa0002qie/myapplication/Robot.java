@@ -11,9 +11,9 @@ public class Robot {
     private int[][] gridSettings; // array of length 300 with explore information
     private int[] headPos = new int[2];
     private int[] robotPos = new int[2];
-    private int[][] obstacleArray = new int[20][15];
-    private int[][] spArray = new int[20][15];
-    private int[][] arrowArray = new int[20][15];
+    private int[][] obstacleArray = new int[Constants.MAP_ROW][Constants.MAP_COL];
+    private int[][] spArray = new int[Constants.MAP_ROW][Constants.MAP_COL];
+    private int[][] arrowArray = new int[Constants.MAP_ROW][Constants.MAP_COL];
 
     private int X;
     private int Y;
@@ -23,8 +23,8 @@ public class Robot {
     private Paint paint;
     private Canvas canvas;
     private static int size = 0;
-    private final static int ROW = 20;
-    private final static int COLUMN = 15;
+    private final static int ROW = Constants.MAP_ROW;
+    private final static int COLUMN = Constants.MAP_COL;
 
     private int waypoint_x = -1;
     private int waypoint_y = -1;
@@ -84,8 +84,8 @@ public class Robot {
         }
 
         // Obstacles
-        for (int i = 0; i < 20; i++){
-            for(int j = 0; j < 15; j++) {
+        for (int i = 0; i < ROW; i++){
+            for(int j = 0; j < COLUMN; j++) {
                 if (this.obstacleArray[i][j] == 0)        // unexplored cell
                     drawCell(j + 1, i + 1, gridSize, Color.TRANSPARENT, canvas);
 
@@ -100,8 +100,8 @@ public class Robot {
         }
 
         // Arrows
-        for(int i = 0 ; i < 20; i++){
-            for(int j = 0; j < 15; j++) {
+        for(int i = 0 ; i < ROW; i++){
+            for(int j = 0; j < COLUMN; j++) {
                 if (this.arrowArray[i][j] == 0)        // unexplored cell
                     drawCell(j + 1, i + 1, gridSize, Color.TRANSPARENT, canvas);
 
@@ -169,8 +169,8 @@ public class Robot {
         }
 
         // shortest path
-        for (int i = 0; i < 20; i++){
-            for (int j = 0; j < 15; j++){
+        for (int i = 0; i < ROW; i++){
+            for (int j = 0; j < COLUMN; j++){
                 if (this.spArray[i][j] == 1) {
                     drawCell(j + 1, i + 1, gridSize, Color.parseColor("#4DD0E1"), canvas);
                 }

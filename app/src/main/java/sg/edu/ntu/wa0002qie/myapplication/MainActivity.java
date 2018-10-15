@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Arena arena;
 
     //original android environment
-    private int[][] gridArray = new int[20][15];
+    private int[][] gridArray = new int[Constants.MAP_ROW][Constants.MAP_COL];
     private int[] headPos = new int[2];
     private int[] robotPos = new int[2];
 
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private boolean autoUpdate = true;
     private boolean tilt = false;
-    private int[][] obstacleArray = new int[20][15];
+    private int[][] obstacleArray = new int[Constants.MAP_ROW][Constants.MAP_COL];
     private ArrayList obstacleSensor = new ArrayList();
     private long startTimeExplore = 0L;
     private long startTimeFastest = 0L;
@@ -119,13 +119,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private String dir = "";
     private int run = 0;
     private List<String> spSteps;
-    private int[][] spArray = new int[20][15];
+    private int[][] spArray = new int[Constants.MAP_ROW][Constants.MAP_COL];
 
     // robot default position
     private int xStatus = 2;
     private int yStatus = 2;
     private int dStatus = 270;
-    private int[][] arrowArray = new int[20][15];
+    private int[][] arrowArray = new int[Constants.MAP_ROW][Constants.MAP_COL];
 
     // counter for arrow coordinate
     private int arrow_x = 0; //global variable holding the x coordinate of arrow
@@ -332,7 +332,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void setWayPoint() {
         waypoint_x = Integer.parseInt(x_coordinate.getText().toString());
         waypoint_y = Integer.parseInt(y_coordinate.getText().toString());
-        String sendWayPoint = waypoint_x + "," + waypoint_y;
+        int x_send = waypoint_x - 1;
+        String sendWayPoint = x_send + "," + waypoint_y;
         sendMessage("WAYPOINT " + sendWayPoint);
         arena.setWayPoint(waypoint_x, waypoint_y);
         Log.d(TAG, "WayPoint set: x=" + waypoint_x + " y=" + waypoint_y);
@@ -353,13 +354,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         robotPos[1] = 2;
         x_coordinate.setText(String.valueOf(robotPos[0]), TextView.BufferType.EDITABLE);
         y_coordinate.setText(String.valueOf(robotPos[1]), TextView.BufferType.EDITABLE);
-        direction.setText("270");
+        direction.setText(Constants.EAST);
         arena = new Arena(this);
         arena.setHeadPos(headPos);
         arena.setRobotPos(robotPos);
         arena.setClickable(true);
-        for (int x = 0; x < 20; x++) {
-            for (int y = 0; y < 15; y++) {
+        for (int x = 0; x < Constants.MAP_ROW; x++) {
+            for (int y = 0; y < Constants.MAP_COL; y++) {
                 obstacleArray[x][y] = 0;
                 spArray[x][y] = 0;
                 arrowArray[x][y] = 0;
@@ -648,7 +649,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         updateGridArray(gridArray);
 
                         obstacleArray = decodeObstacleArray(obstacle);
-                        decodeObstacleArray(obstacleArray);
+//                        decodeObstacleArray(obstacleArray);
                         updateObstacleArray(obstacleArray);
 
                         setRobot(position);
@@ -714,10 +715,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int[][] decodeObstacleArray(String obstacle) {
         String[] obstacleArray = obstacle.split("");
         String[] binaryObstacle = hexToBinary(obstacleArray);
-        int[][] result = new int[20][15];
+        int[][] result = new int[Constants.MAP_ROW][Constants.MAP_COL];
         int index = 1;
-        for (int i = 19; i >= 0; i--) {
-            for (int j = 0; j < 15; j++) {
+        for (int i = Constants.MAP_ROW - 1; i >= 0; i--) {
+            for (int j = 0; j < Constants.MAP_COL; j++) {
                 if (index < binaryObstacle.length) {
                     if (gridArray[i][j] == 1) {
                         result[i][j] = Integer.parseInt(binaryObstacle[index]);
@@ -977,7 +978,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             direction.setText("0");
 
-            if (dStatus == 270) {
+            if (dStatus == Constants.EAST) {
                 robotStatus.setText("Turn Right");
             }
             if (dStatus == 90) {
@@ -1067,9 +1068,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String[] binaryMap = hexToBinary(mapArray);
         // index representing the index of digit in the binary array
         int index = 3;
-        int[][] result = new int[20][15];
-        for (int i = 19; i >= 0; i--) {
-            for (int j = 0; j < 15; j++) {
+        int[][] result = new int[Constants.MAP_ROW][Constants.MAP_COL];
+        for (int i = Constants.MAP_ROW - 1; i >= 0; i--) {
+            for (int j = 0; j < Constants.MAP_COL; j++) {
                 result[i][j] = Integer.parseInt(binaryMap[index]);
                 index++;
             }
@@ -1094,8 +1095,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
 
     private void decodeObstacleArray(int[][] obstacleArray) {
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 15; j++) {
+        for (int i = 0; i < Constants.MAP_ROW; i++) {
+            for (int j = 0; j < Constants.MAP_COL; j++) {
                 obstacleArray[i][j] += 1;
             }
         }
@@ -1260,10 +1261,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public void setRobot(String s) {
         String[] temp = s.split(",");
-        int x = Integer.parseInt(temp[1]);
-        int y = Integer.parseInt(temp[0]);
+        int x = Integer.parseInt(temp[0]);
+        int y = 15 - Integer.parseInt(temp[1]);
         int h = Integer.parseInt(temp[2]);
-        int d = (180 + 90 * h) % 360;
+        int d = 90 * h;
         decodeRobotString(x, y, d);
         Toast.makeText(getApplicationContext(), "Robot Set", Toast.LENGTH_SHORT).show();
     }
