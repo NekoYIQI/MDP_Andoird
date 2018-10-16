@@ -1216,7 +1216,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         int x_send = Integer.parseInt(y_coordinate.getText().toString());
         String message = "BOT_POS" + " " + x_send + "," + x_coordinate.getText().toString()
                 + "," + direction.getText().toString();
-        sendMessage(message);
+//        sendMessage(message);
 
         try {
             decodeRobotString_algo(newPos);
@@ -1232,10 +1232,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public void setRobot(String s) {
         String[] temp = s.split(",");
-        int x = Integer.parseInt(temp[1]);
-        int y = Integer.parseInt(temp[0]);
+        int x = Integer.parseInt(temp[0]);
+        int y = 20 - Integer.parseInt(temp[1]);
         int h = Integer.parseInt(temp[2]);
-        int d = (180 + 90 * h) % 360;
+        int d = 90 * h;
         decodeRobotString(x, y, d);
         Toast.makeText(getApplicationContext(), "Robot Set", Toast.LENGTH_SHORT).show();
     }
