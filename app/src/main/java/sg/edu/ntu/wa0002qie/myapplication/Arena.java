@@ -9,16 +9,16 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 public class Arena extends View {
-    private int col = Constants.MAP_COL;
+    private int col = 15;
     private Robot robot;
     private ArenaThread thread;
     private int gridSize;
 
     // array holding information of the map
-    private int[][] grid = new int[Constants.MAP_ROW][Constants.MAP_COL]; // array of 300 digits
-    private int[][] obstacles = new int[Constants.MAP_ROW][Constants.MAP_COL];
-    private int[][] spArray = new int[Constants.MAP_ROW][Constants.MAP_COL];
-    private int[][] arrowArray = new int[Constants.MAP_ROW][Constants.MAP_COL];
+    private int[][] grid = new int[20][15]; // array of 300 digits
+    private int[][] obstacles = new int[20][15];
+    private int[][] spArray = new int[20][15];
+    private int[][] arrowArray = new int[20][15];
     private int[] headPos = new int[2];
     private int[] robotPos = new int[2];
 
@@ -64,11 +64,11 @@ public class Arena extends View {
     public void setArrowArray(int[][] arrowArray){ this.arrowArray = arrowArray; }
     public void setHeadPos(int[] headPos) {
         this.headPos[0] = headPos[0];
-        this.headPos[1] = Constants.MAP_ROW - headPos[1] + 1;
+        this.headPos[1] = 21 - headPos[1];
     }
     public void setRobotPos(int[] robotPos) {
         this.robotPos[0] = robotPos[0];
-        this.robotPos[1] = Constants.MAP_ROW - robotPos[1 + 1];
+        this.robotPos[1] = 21 - robotPos[1];
     }
     public void setWayPoint(int x, int y){
         this.robot.setWayPoint(x, y);
@@ -90,7 +90,7 @@ public class Arena extends View {
         int column = Math.round(event.getX() / gridSize);
         //invert "ROW"
 
-        int row = Constants.MAP_ROW - Math.round(event.getY() / gridSize) +1;
+        int row = 20 - Math.round(event.getY() / gridSize) +1;
         Log.d("Arena",  "clicked");
         Log.d("Column: ",  column+"");
         Log.d("Row: ",  row+"");

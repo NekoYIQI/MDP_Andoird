@@ -11,9 +11,9 @@ public class Robot {
     private int[][] gridSettings; // array of length 300 with explore information
     private int[] headPos = new int[2];
     private int[] robotPos = new int[2];
-    private int[][] obstacleArray = new int[Constants.MAP_ROW][Constants.MAP_COL];
-    private int[][] spArray = new int[Constants.MAP_ROW][Constants.MAP_COL];
-    private int[][] arrowArray = new int[Constants.MAP_ROW][Constants.MAP_COL];
+    private int[][] obstacleArray = new int[20][15];
+    private int[][] spArray = new int[20][15];
+    private int[][] arrowArray = new int[20][15];
 
     private int X;
     private int Y;
@@ -23,8 +23,8 @@ public class Robot {
     private Paint paint;
     private Canvas canvas;
     private static int size = 0;
-    private final static int ROW = Constants.MAP_ROW;
-    private final static int COLUMN = Constants.MAP_COL;
+    private final static int ROW = 20;
+    private final static int COLUMN = 15;
 
     private int waypoint_x = -1;
     private int waypoint_y = -1;
@@ -84,24 +84,24 @@ public class Robot {
         }
 
         // Obstacles
-        for (int i = 0; i < ROW; i++){
-            for(int j = 0; j < COLUMN; j++) {
+        for (int i = 0; i < 20; i++){
+            for(int j = 0; j < 15; j++) {
                 if (this.obstacleArray[i][j] == 0)        // unexplored cell
                     drawCell(j + 1, i + 1, gridSize, Color.TRANSPARENT, canvas);
 
                 else if (this.obstacleArray[i][j] == 1)   // empty cell
-                    drawCell(j + 1, i + 1, gridSize, Color.TRANSPARENT, canvas);
-
-                else                                      // obstacle
                     drawCell(j + 1, i + 1, gridSize, Color.parseColor("#333333"), canvas);
+
+//                else                                      // obstacle
+//                    drawCell(j + 1, i + 1, gridSize, Color.parseColor("#333333"), canvas);
             }
 
 
         }
 
         // Arrows
-        for(int i = 0 ; i < ROW; i++){
-            for(int j = 0; j < COLUMN; j++) {
+        for(int i = 0 ; i < 20; i++){
+            for(int j = 0; j < 15; j++) {
                 if (this.arrowArray[i][j] == 0)        // unexplored cell
                     drawCell(j + 1, i + 1, gridSize, Color.TRANSPARENT, canvas);
 
@@ -153,7 +153,7 @@ public class Robot {
             }
             //head
             for (int j = rRobotY-1; j <= rRobotY+1; j++){
-                drawCell(rHeadX, j, gridSize, Color.parseColor("#FFFF00"), canvas);
+                drawCell(rHeadX, j, gridSize, Color.parseColor("#FFD600"), canvas);
             }
         }
         if(directionUD){
@@ -162,15 +162,15 @@ public class Robot {
                     drawCell(i, j, gridSize, Color.parseColor("#FFD600"), canvas);
                 }
             }
-            //head
+            //head  FFFF00
             for (int i = rRobotX-1; i <= rRobotX+1; i++){
-                drawCell(i, rHeadY, gridSize, Color.parseColor("#FFFF00"), canvas);
+                drawCell(i, rHeadY, gridSize, Color.parseColor("#FFD600"), canvas);
             }
         }
 
         // shortest path
-        for (int i = 0; i < ROW; i++){
-            for (int j = 0; j < COLUMN; j++){
+        for (int i = 0; i < 20; i++){
+            for (int j = 0; j < 15; j++){
                 if (this.spArray[i][j] == 1) {
                     drawCell(j + 1, i + 1, gridSize, Color.parseColor("#4DD0E1"), canvas);
                 }
