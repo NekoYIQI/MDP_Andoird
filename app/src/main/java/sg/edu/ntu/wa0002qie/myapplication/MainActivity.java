@@ -1232,7 +1232,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public void setRobot(String s) {
         String[] temp = s.split(",");
-        int x = Integer.parseInt(temp[0]);
+        int x = Integer.parseInt(temp[0]) + 1;
         int y = 20 - Integer.parseInt(temp[1]);
         int h = Integer.parseInt(temp[2]);
         int d = 90 * h;
