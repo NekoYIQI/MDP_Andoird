@@ -734,7 +734,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void setArrow()
     {
-
         if(numofarrows == 0)
         {
             numofarrows++;
@@ -745,6 +744,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             numofarrows++;
             arrowText.append("A"+String.valueOf(numofarrows)+"("+String.valueOf(arrow_x)+","+String.valueOf(arrow_y)+","+String.valueOf(arrow_f)+")");
         }
+        arrowArray[19 - arrow_y][arrow_x] = 1;
+        arena.setArrowArray(arrowArray);
     }
 
     /*
