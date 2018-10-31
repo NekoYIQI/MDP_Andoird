@@ -106,11 +106,11 @@ public class Robot {
                     drawCell(j + 1, i + 1, gridSize, Color.TRANSPARENT, canvas);
 
                 else if (this.arrowArray[i][j] == 1)   // empty cell
-                    drawCell(j + 1, i + 1, gridSize, Color.TRANSPARENT, canvas);
+                    drawImage(j + 1, i + 1, gridSize, upArrow, canvas);
 
                 else                                   // arrow
                 {
-                    drawImage(j + 1, i + 1, gridSize, upArrow, canvas);
+                    drawCell(j + 1, i + 1, gridSize, Color.TRANSPARENT, canvas);
                 }
             }
         }
