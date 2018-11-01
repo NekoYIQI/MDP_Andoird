@@ -668,7 +668,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         String[] b = a.split(",");
                         int x = Integer.parseInt(b[0]);
                         int y = Integer.parseInt(b[1]);
-                        String face = b[2];
+                        String face = b[2].charAt(0) + "";
                         fConversationAA.add(mConnectedDevice + " : " + readMsg);
 
                         arrow_x = x;
